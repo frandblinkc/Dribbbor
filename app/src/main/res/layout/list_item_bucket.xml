@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_medium"
+        android:background="@android:color/white">
+
+        <TextView
+            android:id="@+id/bucket_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/bucket_chosen"
+            android:layout_alignParentLeft="true"
+            android:textColor="@color/bucket_name_text_color"
+            android:textSize="@dimen/card_view_title_size"
+            tools:text="Bucket name"/>
+
+        <TextView
+            android:id="@+id/bucket_shot_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/bucket_chosen"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/bucket_name"
+            android:layout_marginTop="@dimen/spacing_xsmall"
+            android:textColor="@color/bucket_name_text_color"
+            tools:text="90 shots"/>
+
+
+        <ImageView
+            android:id="@+id/bucket_chosen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_check_box_outline_blank_black_24dp"/>
+
+    </RelativeLayout>
+
+</FrameLayout>
