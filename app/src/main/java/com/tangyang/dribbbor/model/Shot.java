@@ -38,7 +38,7 @@ public class Shot {
         if (images == null) {
             return null;
         } else if (animated) {
-            return images.get(IMAGE_NORMAL)
+            return images.get(IMAGE_NORMAL);
         }
 
         return images.containsKey(IMAGE_HIDPI)

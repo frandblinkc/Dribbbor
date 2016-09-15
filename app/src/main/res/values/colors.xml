@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="bucket_name_text_color">#cc000000</color>
+    <color name="place_holder_bg">#33000000</color>
 </resources>
