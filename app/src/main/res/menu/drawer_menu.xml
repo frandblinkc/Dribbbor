@@ -5,19 +5,19 @@
             android:id="@+id/drawer_item_home"
             android:icon="@drawable/ic_home_black_18dp"
             android:checked="true"
-            android:title="Home"
+            android:title="@string/drawer_menu_home"
             />
 
         <item
             android:id="@+id/drawer_item_likes"
             android:icon="@drawable/ic_favorite_black_18dp"
-            android:title="Home"
+            android:title="@string/drawer_menu_likes"
             />
 
         <item
             android:id="@+id/drawer_item_buckets"
             android:icon="@drawable/ic_inbox_black_18dp"
-            android:title="Home"
+            android:title="@string/drawer_menu_buckets"
             />
 
     </group>
