@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tangyang.dribbbor.R;
+import com.tangyang.dribbbor.base.SpaceItemDecoration;
 import com.tangyang.dribbbor.model.Shot;
 
 import java.util.ArrayList;
@@ -47,8 +48,9 @@ public class ShotListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         ShotListAdapter adapter = new ShotListAdapter(fakeData());
+        recyclerView.addItemDecoration(new SpaceItemDecoration(
+                            getResources().getDimensionPixelSize(R.dimen.spacing_medium)));
         recyclerView.setAdapter(adapter);
-
     }
 
     public List<Shot> fakeData() {
