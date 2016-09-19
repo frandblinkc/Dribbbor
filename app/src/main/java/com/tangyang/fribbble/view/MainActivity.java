@@ -1,4 +1,4 @@
-package com.tangyang.dribbbor;
+package com.tangyang.fribbble.view;
 
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
@@ -9,11 +9,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.tangyang.dribbbor.view.bucket_list.BucketListFragment;
-import com.tangyang.dribbbor.view.shot_list.ShotListFragment;
+import com.tangyang.fribbble.R;
+import com.tangyang.fribbble.view.bucket_list.BucketListFragment;
+import com.tangyang.fribbble.view.shot_list.ShotListFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,6 +22,8 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.drawer) NavigationView navigationView;
     @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
+    @BindView(R.id.my_toolbar) Toolbar toolbar;
+
     private ActionBarDrawerToggle drawerToggle;
 
     @Override
@@ -28,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
 
         setUpDrawer();
 

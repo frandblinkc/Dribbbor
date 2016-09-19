@@ -1,4 +1,4 @@
-package com.tangyang.dribbbor.base;
+package com.tangyang.fribbble.view.base;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

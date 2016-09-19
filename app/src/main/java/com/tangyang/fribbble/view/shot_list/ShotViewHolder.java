@@ -1,12 +1,11 @@
-package com.tangyang.dribbbor.view.shot_list;
+package com.tangyang.fribbble.view.shot_list;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tangyang.dribbbor.R;
-import com.tangyang.dribbbor.base.BaseViewHolder;
+import com.tangyang.fribbble.R;
+import com.tangyang.fribbble.view.base.BaseViewHolder;
 
 import butterknife.BindView;
 

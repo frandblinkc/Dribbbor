@@ -1,4 +1,4 @@
-package com.tangyang.dribbbor.model;
+package com.tangyang.fribbble.model;
 
 /**
  * Created by tangy on 9/13/2016.

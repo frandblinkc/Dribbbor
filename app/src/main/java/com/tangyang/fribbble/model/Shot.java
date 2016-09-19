@@ -1,4 +1,4 @@
-package com.tangyang.dribbbor.model;
+package com.tangyang.fribbble.model;
 
 import android.support.annotation.Nullable;
 

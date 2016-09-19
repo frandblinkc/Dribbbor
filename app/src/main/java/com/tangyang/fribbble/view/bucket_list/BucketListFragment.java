@@ -1,4 +1,4 @@
-package com.tangyang.dribbbor.view.bucket_list;
+package com.tangyang.fribbble.view.bucket_list;
 
 
 import android.os.Bundle;
@@ -11,9 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tangyang.dribbbor.R;
-import com.tangyang.dribbbor.base.SpaceItemDecoration;
-import com.tangyang.dribbbor.model.Bucket;
+import com.tangyang.fribbble.R;
+import com.tangyang.fribbble.view.base.SpaceItemDecoration;
+import com.tangyang.fribbble.model.Bucket;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.tangyang.dribbbor.view.shot_list;
+package com.tangyang.fribbble.view.shot_list;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,9 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tangyang.dribbbor.R;
-import com.tangyang.dribbbor.base.SpaceItemDecoration;
-import com.tangyang.dribbbor.model.Shot;
+import com.tangyang.fribbble.R;
+import com.tangyang.fribbble.view.base.SpaceItemDecoration;
+import com.tangyang.fribbble.model.Shot;
 
 import java.util.ArrayList;
 import java.util.List;

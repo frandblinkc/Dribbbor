@@ -1,14 +1,11 @@
-package com.tangyang.dribbbor.view.bucket_list;
+package com.tangyang.fribbble.view.bucket_list;
 
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tangyang.dribbbor.R;
-import com.tangyang.dribbbor.base.BaseViewHolder;
-
-import org.w3c.dom.Text;
+import com.tangyang.fribbble.R;
+import com.tangyang.fribbble.view.base.BaseViewHolder;
 
 import butterknife.BindView;
 

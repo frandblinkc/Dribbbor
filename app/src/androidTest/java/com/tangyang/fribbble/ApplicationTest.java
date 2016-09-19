@@ -1,4 +1,4 @@
-package com.tangyang.dribbbor;
+package com.tangyang.fribbble;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

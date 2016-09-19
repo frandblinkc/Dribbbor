@@ -1,4 +1,4 @@
-package com.tangyang.dribbbor;
+package com.tangyang.fribbble;
 
 import org.junit.Test;
 

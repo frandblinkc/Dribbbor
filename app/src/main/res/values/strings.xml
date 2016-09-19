@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Dribbbor</string>
+    <string name="app_name">Fribbble</string>
 
     <string name="title_home">@string/app_name</string>
     <string name="title_likes">Likes</string>
