@@ -19,7 +19,6 @@
         android:layout_height="@dimen/activity_auth_progress_bar_height"
         android:layout_below="@+id/toolbar"
         style="?android:attr/progressBarStyleHorizontal"
-        android:max="100"
         />
 
 </RelativeLayout>
