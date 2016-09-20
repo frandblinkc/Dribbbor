@@ -11,13 +11,13 @@
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/my_toolbar"/>
+        android:layout_below="@+id/toolbar"/>
 
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/activity_auth_progress_bar_height"
-        android:layout_below="@+id/my_toolbar"
+        android:layout_below="@+id/toolbar"
         style="?android:attr/progressBarStyleHorizontal"
         android:max="100"
         />

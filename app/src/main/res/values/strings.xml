@@ -18,4 +18,6 @@
 
     <string name="activity_login_icon">Dribbble icon</string>
     <string name="activity_login_button_text">Login to Dribbble</string>
+
+    <string name="activitiy_login_title">Log into Dribbble </string>
 </resources>
