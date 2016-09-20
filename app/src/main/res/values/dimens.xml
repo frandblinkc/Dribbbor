@@ -15,5 +15,7 @@
 
     <dimen name="card_view_title_size">17sp</dimen>
 
+    <dimen name="activity_login_icon_size">72dp</dimen>
+    <dimen name="activity_auth_progress_bar_height">2dp</dimen>
 
 </resources>
