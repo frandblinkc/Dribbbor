@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -15,6 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.tangyang.fribbble.R;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.BindViews;
@@ -27,7 +30,6 @@ public class AuthActivity extends AppCompatActivity {
     public static final String KEY_URL = "url";
     public static final String KEY_CODE = "code";
 
-    private String code;
 
 
     @BindView(R.id.progress_bar)ProgressBar progressBar;
@@ -52,10 +54,25 @@ public class AuthActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Log.d("frandblinkc", "shouldOverridingUrlLoading executed! + url=" + url);
                 if (url.startsWith(Auth.REDIRECT_URI)) {
                     Uri uri = Uri.parse(url);
-                    code = uri.getQueryParameter(KEY_CODE);
+                    final String code = uri.getQueryParameter(KEY_CODE);
+                    Log.d("frandblinkc", "code=" + code);
                     Toast.makeText(AuthActivity.this, "code=" + code, Toast.LENGTH_LONG).show();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                String accessToken = Auth.fetchAccessToken(code);
+                                Log.d("frandblinkc", "access token is" + accessToken);
+                                //Toast.makeText(AuthActivity.this, "access_token=" + accessToken, Toast.LENGTH_LONG).show();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
 
                 }
                 return super.shouldOverrideUrlLoading(view, url);
