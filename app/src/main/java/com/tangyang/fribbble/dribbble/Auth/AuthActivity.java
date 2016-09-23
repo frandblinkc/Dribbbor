@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.tangyang.fribbble.R;
+import com.tangyang.fribbble.dribbble.Dribbble;
 
 import java.io.IOException;
 
@@ -50,6 +51,8 @@ public class AuthActivity extends AppCompatActivity {
 
         String url = Auth.REDIRECT_URI;
 
+        testLoadToken();
+
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -65,8 +68,12 @@ public class AuthActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             try {
-                                String accessToken = Auth.fetchAccessToken(code);
-                                Log.d("frandblinkc", "access token is" + accessToken);
+                                if (code != null) {
+                                    String accessToken = Auth.fetchAccessToken(code);
+                                    Dribbble.storeAccessToken(AuthActivity.this, accessToken);
+                                    Log.d("frandblinkc", "access token is" + accessToken);
+                                }
+
                                 //Toast.makeText(AuthActivity.this, "access_token=" + accessToken, Toast.LENGTH_LONG).show();
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -103,5 +110,11 @@ public class AuthActivity extends AppCompatActivity {
         webView.loadUrl(Auth.getAuthorizeUrl());
 
 
+    }
+
+
+    private void testLoadToken() {
+        String token = Dribbble.loadAccessToken(AuthActivity.this);
+        Log.d("frandblinkc", "successfully loaded token: " + token);
     }
 }
