@@ -20,4 +20,5 @@
     <string name="activity_login_button_text">Login to Dribbble</string>
 
     <string name="activitiy_login_title">Log into Dribbble </string>
+    <string name="logout">Log out</string>
 </resources>

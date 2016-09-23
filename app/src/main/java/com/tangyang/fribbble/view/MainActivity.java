@@ -1,5 +1,6 @@
 package com.tangyang.fribbble.view;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,9 +11,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.tangyang.fribbble.R;
+import com.tangyang.fribbble.dribbble.Dribbble;
 import com.tangyang.fribbble.view.bucket_list.BucketListFragment;
 import com.tangyang.fribbble.view.shot_list.ShotListFragment;
 
@@ -34,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        setUpDrawer();
 
+
+        setUpDrawer();
 
 
         if (savedInstanceState == null) {
@@ -60,6 +66,23 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        // display user info in navigation drawer header
+        View headView = navigationView.getHeaderView(0);
+        ((TextView) headView.findViewById(R.id.nav_header_user_name))
+                .setText(Dribbble.getCurrentUser().name);
+
+        // set the log out button function
+        headView.findViewById(R.id.nav_header_logout_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dribbble.logout(MainActivity.this);
+
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

@@ -73,8 +73,10 @@ public class LoginActivity extends AppCompatActivity{
                     try {
                         Log.d("frandblinkc", "in the new thread!");
                         String accessToken = Auth.fetchAccessToken(code);
-                        Dribbble.storeAccessToken(LoginActivity.this, accessToken);
+                        Dribbble.login(LoginActivity.this, accessToken);
                         Log.d("frandblinkc", "access token is" + accessToken);
+
+                        Dribbble.login(LoginActivity.this, accessToken);
 
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
