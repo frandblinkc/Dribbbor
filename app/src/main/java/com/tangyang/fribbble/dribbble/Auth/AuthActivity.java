@@ -1,5 +1,6 @@
 package com.tangyang.fribbble.dribbble.Auth;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,10 +50,6 @@ public class AuthActivity extends AppCompatActivity {
 
         progressBar.setMax(100);
 
-        String url = Auth.REDIRECT_URI;
-
-        testLoadToken();
-
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -60,27 +57,13 @@ public class AuthActivity extends AppCompatActivity {
                 Log.d("frandblinkc", "shouldOverridingUrlLoading executed! + url=" + url);
                 if (url.startsWith(Auth.REDIRECT_URI)) {
                     Uri uri = Uri.parse(url);
-                    final String code = uri.getQueryParameter(KEY_CODE);
-                    Log.d("frandblinkc", "code=" + code);
-                    Toast.makeText(AuthActivity.this, "code=" + code, Toast.LENGTH_LONG).show();
-
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                if (code != null) {
-                                    String accessToken = Auth.fetchAccessToken(code);
-                                    Dribbble.storeAccessToken(AuthActivity.this, accessToken);
-                                    Log.d("frandblinkc", "access token is" + accessToken);
-                                }
-
-                                //Toast.makeText(AuthActivity.this, "access_token=" + accessToken, Toast.LENGTH_LONG).show();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-
+                    String code = uri.getQueryParameter(KEY_CODE);
+                    if (code != null) {
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra(KEY_CODE, code);
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    }
                 }
                 return super.shouldOverrideUrlLoading(view, url);
             }
@@ -106,15 +89,8 @@ public class AuthActivity extends AppCompatActivity {
 
 
 
-
-        webView.loadUrl(Auth.getAuthorizeUrl());
-
-
+        String url = getIntent().getStringExtra(KEY_URL);
+        webView.loadUrl(url);
     }
 
-
-    private void testLoadToken() {
-        String token = Dribbble.loadAccessToken(AuthActivity.this);
-        Log.d("frandblinkc", "successfully loaded token: " + token);
-    }
 }

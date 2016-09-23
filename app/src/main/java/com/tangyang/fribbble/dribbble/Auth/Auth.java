@@ -1,5 +1,7 @@
 package com.tangyang.fribbble.dribbble.Auth;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 
 import org.json.JSONException;
@@ -17,6 +19,8 @@ import okhttp3.Response;
  * Created by tangy on 9/19/2016.
  */
 public class Auth {
+    public static final int REQ_CODE = 100;
+
     private static final String KEY_CODE = "code";
     private static final String KEY_CLIENT_ID = "client_id";
     private static final String KEY_CLIENT_SECRET = "client_secret";
@@ -76,6 +80,12 @@ public class Auth {
             e.printStackTrace();
             return "";
         }
+    }
+
+    public static void openAuthActivity(Activity activity) {
+        Intent intent = new Intent(activity, AuthActivity.class);
+        intent.putExtra(AuthActivity.KEY_URL,getAuthorizeUrl());
+        activity.startActivityForResult(intent, REQ_CODE);
     }
 
 
