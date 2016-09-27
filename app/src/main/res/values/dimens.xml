@@ -20,4 +20,9 @@
 
     <dimen name="nav_header_logout_btn_margin_left">-8dp</dimen>
 
+    <dimen name="shot_action_icon_size">32dp</dimen>
+
+    <dimen name="shot_action_drawable_top_icon_padding">7dp</dimen>
+    <dimen name="shot_author_image_size">48dp</dimen>
+
 </resources>

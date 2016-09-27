@@ -90,6 +90,10 @@ public class AuthActivity extends AppCompatActivity {
 
 
         String url = getIntent().getStringExtra(KEY_URL);
+
+        // clear any cache or history left from last login
+        webView.clearCache(true);
+        webView.clearHistory();
         webView.loadUrl(url);
     }
 

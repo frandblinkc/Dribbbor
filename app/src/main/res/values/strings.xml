@@ -21,4 +21,9 @@
 
     <string name="activitiy_login_title">Log into Dribbble </string>
     <string name="logout">Log out</string>
+
+    <string name="share">Share</string>
+    <string name="like">Like</string>
+    <string name="bucket">Bucket</string>
+    <string name="shot_author_image">Shot author image</string>
 </resources>

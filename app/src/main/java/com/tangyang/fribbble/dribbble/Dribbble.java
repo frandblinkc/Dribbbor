@@ -130,14 +130,16 @@ public class Dribbble {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             Log.d(TAG, "Using clearCookies code for API >= " + String.valueOf(Build.VERSION_CODES.LOLLIPOP_MR1));
             CookieManager.getInstance().removeAllCookies(null);
-            CookieManager.getInstance().flush();
+            CookieManager.getInstance().flush(); // force a sync
         } else {
             Log.d(TAG, "Using clearCookies code for API < " + String.valueOf(Build.VERSION_CODES.LOLLIPOP_MR1));
             CookieSyncManager cookieSyncManager = CookieSyncManager.createInstance(context);
             cookieSyncManager.startSync();
+            // remove cookie in RAM
             CookieManager cookieManager = CookieManager.getInstance();
             cookieManager.removeAllCookie();
             cookieManager.removeSessionCookie();
+
             cookieSyncManager.stopSync();
             cookieSyncManager.sync();
         }
