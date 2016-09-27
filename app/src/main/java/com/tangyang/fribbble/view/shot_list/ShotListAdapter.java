@@ -1,5 +1,7 @@
 package com.tangyang.fribbble.view.shot_list;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Shot;
+import com.tangyang.fribbble.view.shot_detail.ShotActivity;
 
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class ShotListAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         Shot shot = data.get(position);
 
         ShotViewHolder shotViewHolder = (ShotViewHolder) holder;
@@ -40,6 +43,14 @@ public class ShotListAdapter extends RecyclerView.Adapter {
         shotViewHolder.bucketCount.setText(String.valueOf(shot.buckets_count));
         shotViewHolder.image.setImageResource(R.drawable.shot_placeholder);
 
+        shotViewHolder.cover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = holder.itemView.getContext();
+                Intent intent = new Intent(context, ShotActivity.class);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

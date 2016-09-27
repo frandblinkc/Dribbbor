@@ -28,6 +28,7 @@
             android:windowSoftInputMode="adjustPan">
         </activity>
 
+        <activity android:name=".view.shot_detail.ShotActivity"/>
 
     </application>
 

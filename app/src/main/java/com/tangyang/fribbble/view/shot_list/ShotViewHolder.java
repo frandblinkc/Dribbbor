@@ -13,10 +13,11 @@ import butterknife.BindView;
  * Created by tangy on 9/14/2016.
  */
 public class ShotViewHolder extends BaseViewHolder {
-    @BindView(R.id.shot_like_count) public TextView likeCount;
-    @BindView(R.id.shot_view_count) public TextView viewCount;
-    @BindView(R.id.shot_bucket_count) public TextView bucketCount;
-    @BindView(R.id.list_shot_image) public ImageView image;
+    @BindView(R.id.shot_clickable_cover) View cover;
+    @BindView(R.id.shot_like_count) TextView likeCount;
+    @BindView(R.id.shot_view_count) TextView viewCount;
+    @BindView(R.id.shot_bucket_count) TextView bucketCount;
+    @BindView(R.id.list_shot_image) ImageView image;
 
 
     public ShotViewHolder(View itemView) {
