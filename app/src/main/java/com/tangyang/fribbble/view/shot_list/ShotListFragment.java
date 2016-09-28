@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.User;
@@ -49,7 +50,12 @@ public class ShotListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        ShotListAdapter adapter = new ShotListAdapter(fakeData());
+        ShotListAdapter adapter = new ShotListAdapter(fakeData(), new ShotListAdapter.LoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                Toast.makeText(getContext(), "onLoadMore() fired", Toast.LENGTH_LONG).show();
+            }
+        });
         recyclerView.addItemDecoration(new SpaceItemDecoration(
                             getResources().getDimensionPixelSize(R.dimen.spacing_medium)));
         recyclerView.setAdapter(adapter);

@@ -26,9 +26,11 @@ public class ShotListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_LOADING = 1;
 
     private List<Shot> data;
+    private LoadMoreListener loadMoreListener;
 
-    public ShotListAdapter(@NonNull  List<Shot> data) {
+    public ShotListAdapter(@NonNull  List<Shot> data, @NonNull LoadMoreListener loadMoreListener) {
         this.data = data;
+        this.loadMoreListener = loadMoreListener;
     }
 
     @Override
@@ -46,7 +48,9 @@ public class ShotListAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        if (!(holder instanceof ShotViewHolder)) {
+        final int viewType = getItemViewType(position);
+        if (viewType == VIEW_TYPE_LOADING) {
+            loadMoreListener.onLoadMore();
             return;
         }
 
@@ -79,5 +83,9 @@ public class ShotListAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         return position < data.size()? VIEW_TYPE_SHOT: VIEW_TYPE_LOADING;
+    }
+
+    public interface LoadMoreListener {
+        void onLoadMore();
     }
 }
