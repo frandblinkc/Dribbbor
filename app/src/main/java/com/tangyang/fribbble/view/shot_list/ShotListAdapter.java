@@ -50,10 +50,12 @@ public class ShotListAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        final int viewType = getItemViewType(position);
-        if (viewType == VIEW_TYPE_LOADING) {
-            loadMoreListener.onLoadMore();
+        if (getItemViewType(position) == VIEW_TYPE_LOADING) {
             return;
+        }
+        // fire onLoadMore() when starting to display last item
+        if (position == data.size() - 1) {
+            loadMoreListener.onLoadMore();
         }
 
         final Shot shot = data.get(position);

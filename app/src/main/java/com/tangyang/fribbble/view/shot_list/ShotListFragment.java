@@ -69,8 +69,10 @@ public class ShotListFragment extends Fragment {
                                 @Override
                                 public void run() {
                                     List<Shot> moreData = fakeData(adapter.getDataCount() / COUNT_PER_PAGE);
-                                    adapter.append(moreData);
-                                    adapter.setShowLoading(moreData.size() == COUNT_PER_PAGE);
+                                    if (!moreData.isEmpty()) {
+                                        adapter.append(moreData);
+                                        adapter.setShowLoading(moreData.size() == COUNT_PER_PAGE);
+                                    }
                                 }
                             });
                         } catch (InterruptedException e) {
@@ -89,7 +91,10 @@ public class ShotListFragment extends Fragment {
         List<Shot> shotList = new ArrayList<>();
         Random random = new Random();
         // only fake 10 items for page 3
-        int count = page < 3? COUNT_PER_PAGE: 10;
+        int count = page < 2? COUNT_PER_PAGE: 10;
+        if (page > 4) {
+            count = COUNT_PER_PAGE;
+        }
 
         for (int i = 0; i < count; i++) {
             Shot shot = new Shot();
