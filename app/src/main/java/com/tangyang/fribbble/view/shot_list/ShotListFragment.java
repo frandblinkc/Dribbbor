@@ -28,6 +28,8 @@ import butterknife.ButterKnife;
  * Created by tangy on 9/13/2016.
  */
 public class ShotListFragment extends Fragment {
+    private static final int COUNT_PER_PAGE = 20;
+
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
 
     private ShotListAdapter adapter;
@@ -54,7 +56,7 @@ public class ShotListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         final Handler handler = new Handler();
-        adapter = new ShotListAdapter(fakeData(), new ShotListAdapter.LoadMoreListener() {
+        adapter = new ShotListAdapter(fakeData(0), new ShotListAdapter.LoadMoreListener() {
             @Override
             public void onLoadMore() {
                 new Thread(new Runnable() {
@@ -66,7 +68,9 @@ public class ShotListFragment extends Fragment {
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    adapter.append(fakeData());
+                                    List<Shot> moreData = fakeData(adapter.getDataCount() / COUNT_PER_PAGE);
+                                    adapter.append(moreData);
+                                    adapter.setShowLoading(moreData.size() == COUNT_PER_PAGE);
                                 }
                             });
                         } catch (InterruptedException e) {
@@ -81,10 +85,13 @@ public class ShotListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
-    public List<Shot> fakeData() {
+    public List<Shot> fakeData(int page) {
         List<Shot> shotList = new ArrayList<>();
         Random random = new Random();
-        for (int i = 0; i < 20; i++) {
+        // only fake 10 items for page 3
+        int count = page < 3? COUNT_PER_PAGE: 10;
+
+        for (int i = 0; i < count; i++) {
             Shot shot = new Shot();
             shot.title = "shot " + i;
             shot.views_count = random.nextInt(10000);
