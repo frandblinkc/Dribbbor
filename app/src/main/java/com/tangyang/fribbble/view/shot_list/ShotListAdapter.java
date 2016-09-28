@@ -22,6 +22,8 @@ import java.util.List;
  * Created by tangy on 9/14/2016.
  */
 public class ShotListAdapter extends RecyclerView.Adapter {
+    private static final int VIEW_TYPE_SHOT = 0;
+    private static final int VIEW_TYPE_LOADING = 1;
 
     private List<Shot> data;
 
@@ -31,13 +33,23 @@ public class ShotListAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                                    .inflate(R.layout.list_item_shot, parent, false);
-        return new ShotViewHolder(view);
+        if (viewType == VIEW_TYPE_SHOT) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_item_shot, parent, false);
+            return new ShotViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.list_item_loading, parent, false);
+            return new RecyclerView.ViewHolder(view) {}; //create an anonymous subclass and instantiate it
+        }
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        if (!(holder instanceof ShotViewHolder)) {
+            return;
+        }
+
         final Shot shot = data.get(position);
 
         ShotViewHolder shotViewHolder = (ShotViewHolder) holder;
@@ -61,6 +73,11 @@ public class ShotListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return data.size() + 1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position < data.size()? VIEW_TYPE_SHOT: VIEW_TYPE_LOADING;
     }
 }

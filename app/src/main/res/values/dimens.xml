@@ -25,4 +25,7 @@
     <dimen name="shot_action_drawable_top_icon_padding">7dp</dimen>
     <dimen name="shot_author_image_size">48dp</dimen>
 
+    <dimen name="loading_item_height">36dp</dimen>
+    <dimen name="loading_progressbar_size">24dp</dimen>
+
 </resources>
