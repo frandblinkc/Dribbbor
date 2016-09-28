@@ -1,22 +1,29 @@
 package com.tangyang.fribbble.view.shot_list;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.gson.JsonSyntaxException;
 import com.tangyang.fribbble.R;
+import com.tangyang.fribbble.dribbble.Dribbble;
 import com.tangyang.fribbble.model.User;
 import com.tangyang.fribbble.view.base.SpaceItemDecoration;
 import com.tangyang.fribbble.model.Shot;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,7 +35,6 @@ import butterknife.ButterKnife;
  * Created by tangy on 9/13/2016.
  */
 public class ShotListFragment extends Fragment {
-    private static final int COUNT_PER_PAGE = 20;
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
 
@@ -55,77 +61,57 @@ public class ShotListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        final Handler handler = new Handler();
-        adapter = new ShotListAdapter(fakeData(0), new ShotListAdapter.LoadMoreListener() {
+        recyclerView.addItemDecoration(new SpaceItemDecoration(
+                getResources().getDimensionPixelSize(R.dimen.spacing_medium)));
+
+        adapter = new ShotListAdapter(new ArrayList<Shot>(), new ShotListAdapter.LoadMoreListener() {
             @Override
             public void onLoadMore() {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(2000);
-
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    List<Shot> moreData = fakeData(adapter.getDataCount() / COUNT_PER_PAGE);
-                                    if (!moreData.isEmpty()) {
-                                        adapter.append(moreData);
-                                        adapter.setShowLoading(moreData.size() == COUNT_PER_PAGE);
-                                    }
-                                }
-                            });
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                // this method will be called when the RecyclerView is displayed
+                // page starts from 1
+                // Executes the task with the specified parameters, allowing multiple tasks to run in parallel
+                // on a pool of threads managed by {@link android.os.AsyncTask}.
+                AsyncTaskCompat.executeParallel(new LoadShotTask(adapter.getDataCount() / Dribbble.SHOTS_PER_PAGE + 1));
             }
         });
-        recyclerView.addItemDecoration(new SpaceItemDecoration(
-                            getResources().getDimensionPixelSize(R.dimen.spacing_medium)));
+
         recyclerView.setAdapter(adapter);
     }
 
-    public List<Shot> fakeData(int page) {
-        List<Shot> shotList = new ArrayList<>();
-        Random random = new Random();
-        // only fake 10 items for page 3
-        int count = page < 2? COUNT_PER_PAGE: 10;
-        if (page > 4) {
-            count = COUNT_PER_PAGE;
+
+
+    private class LoadShotTask extends AsyncTask<Void, Void, List<Shot>> {
+        int page;
+
+        public LoadShotTask(int page) {
+            this.page = page;
         }
 
-        for (int i = 0; i < count; i++) {
-            Shot shot = new Shot();
-            shot.title = "shot " + i;
-            shot.views_count = random.nextInt(10000);
-            shot.likes_count = random.nextInt(200);
-            shot.buckets_count = random.nextInt(50);
-            shot.description = makeDescription();
-
-            shot.user = new User();
-            shot.user.name = shot.title + " author";
-
-
-            shotList.add(shot);
+        @Override
+        protected List<Shot> doInBackground(Void... voids) {
+            Log.d("frandblinkc", "inside doInBackground of asyncTask");
+            // this method executed on non-UI thread
+            try {
+                return Dribbble.getShots(page);
+            } catch (IOException | JsonSyntaxException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
-        return shotList;
+
+        @Override
+        protected void onPostExecute(List<Shot> shots) {
+            // this method is executed on UI thread
+            Log.d("frandblinkc", "inside onPostExecute of asyncTask");
+            if (shots != null) {
+                if (!shots.isEmpty()) {
+                    adapter.append(shots);
+                    adapter.setShowLoading(shots.size() == Dribbble.SHOTS_PER_PAGE);
+                }
+            } else {
+                Snackbar.make(getView(), "Error fetching shots!", Snackbar.LENGTH_LONG).show();
+            }
+        }
     }
-
-    private static final String[] words = {
-            "bottle", "bowl", "brick", "building", "bunny", "cake", "car", "cat", "cup",
-            "desk", "dog", "duck", "elephant", "engineer", "fork", "glass", "griffon", "hat", "key",
-            "knife", "lawyer", "llama", "manual", "meat", "monitor", "mouse", "tangerine", "paper",
-            "pear", "pen", "pencil", "phone", "physicist", "planet", "potato", "road", "salad",
-            "shoe", "slipper", "soup", "spoon", "star", "steak", "table", "terminal", "treehouse",
-            "truck", "watermelon", "window"
-    };
-
-    private static String makeDescription() {
-        return TextUtils.join(" ", words);
-    }
-
-
 
 }

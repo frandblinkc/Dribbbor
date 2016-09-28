@@ -11,10 +11,12 @@ import android.webkit.CookieSyncManager;
 
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.tangyang.fribbble.model.Shot;
 import com.tangyang.fribbble.model.User;
 import com.tangyang.fribbble.utils.ModelUtils;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -25,16 +27,20 @@ import okhttp3.Response;
  */
 public class Dribbble {
 
+    public static final int SHOTS_PER_PAGE = 20;
+
     private static final String TAG = "Dribbble API";
 
     private static final String API_URL = "https://api.dribbble.com/v1/";
     private static final String USER_END_POINT = API_URL + "user";
+    private static final String SHOTS_END_POINT = API_URL + "shots";
 
     private static final String SP_AUTH = "auth";
     private static final String KEY_ACCESS_TOKEN = "access_token";
     private static final String KEY_USER = "user";
 
     private static final TypeToken<User> USER_TYPE_TOKEN = new TypeToken<User>(){};
+    private static final TypeToken<List<Shot>> SHOT_LIST_TYPE_TOKEN = new TypeToken<List<Shot>>(){};
 
     private static String accessToken;
     private static User user;
@@ -154,6 +160,15 @@ public class Dribbble {
     // get current user stored in memory
     public static User getCurrentUser () {
         return user;
+    }
+
+    // get shots from Dribbble.com
+    public static List<Shot> getShots(int page) throws IOException, JsonSyntaxException {
+        Log.d("frandblinkc", "inside Dribbble.getShots");
+        String url = SHOTS_END_POINT + "?page=" + page + "&per_page=" + SHOTS_PER_PAGE;
+
+        Log.d("frandblinkc", "the url is: " + url);
+        return parseResponse(makeGetRequest(url), SHOT_LIST_TYPE_TOKEN);
     }
 
 
