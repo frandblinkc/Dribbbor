@@ -8,9 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.reflect.TypeToken;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Shot;
+import com.tangyang.fribbble.utils.ModelUtils;
 import com.tangyang.fribbble.view.shot_detail.ShotActivity;
+import com.tangyang.fribbble.view.shot_detail.ShotFragment;
 
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class ShotListAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        Shot shot = data.get(position);
+        final Shot shot = data.get(position);
 
         ShotViewHolder shotViewHolder = (ShotViewHolder) holder;
         shotViewHolder.likeCount.setText(String.valueOf(shot.likes_count));
@@ -48,6 +51,9 @@ public class ShotListAdapter extends RecyclerView.Adapter {
             public void onClick(View view) {
                 Context context = holder.itemView.getContext();
                 Intent intent = new Intent(context, ShotActivity.class);
+                intent.putExtra(ShotFragment.KEY_SHOT,
+                        ModelUtils.toString(shot, new TypeToken<Shot>(){}));
+                intent.putExtra(ShotActivity.KEY_SHOT_TITLE, shot.title);
                 context.startActivity(intent);
             }
         });
