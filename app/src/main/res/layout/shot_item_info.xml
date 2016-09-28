@@ -87,7 +87,7 @@
             android:drawableTop="@drawable/ic_share_black_18dp"
             android:drawablePadding="@dimen/spacing_small"
             android:background="?attr/selectableItemBackground"
-            tools:text="@string/share"/>
+            android:text="@string/share"/>
 
 
     </LinearLayout>
