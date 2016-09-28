@@ -1,6 +1,7 @@
 package com.tangyang.fribbble.view.shot_list;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +30,8 @@ import butterknife.ButterKnife;
 public class ShotListFragment extends Fragment {
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
 
+    private ShotListAdapter adapter;
+
     public static ShotListFragment newInstance() {
         return new ShotListFragment();
     }
@@ -50,10 +53,27 @@ public class ShotListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        ShotListAdapter adapter = new ShotListAdapter(fakeData(), new ShotListAdapter.LoadMoreListener() {
+        final Handler handler = new Handler();
+        adapter = new ShotListAdapter(fakeData(), new ShotListAdapter.LoadMoreListener() {
             @Override
             public void onLoadMore() {
-                Toast.makeText(getContext(), "onLoadMore() fired", Toast.LENGTH_LONG).show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(2000);
+
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.append(fakeData());
+                                }
+                            });
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }
         });
         recyclerView.addItemDecoration(new SpaceItemDecoration(
