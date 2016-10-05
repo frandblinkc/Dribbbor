@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Shot;
 import com.tangyang.fribbble.utils.ModelUtils;
@@ -64,7 +66,15 @@ public class ShotListAdapter extends RecyclerView.Adapter {
         shotViewHolder.likeCount.setText(String.valueOf(shot.likes_count));
         shotViewHolder.viewCount.setText(String.valueOf(shot.views_count));
         shotViewHolder.bucketCount.setText(String.valueOf(shot.buckets_count));
-        shotViewHolder.image.setImageResource(R.drawable.shot_placeholder);
+
+        String url = shot.getImageUrl();
+        Log.d("frandblinkc", "loading url: " + url);
+        Picasso.with(shotViewHolder.itemView.getContext())
+                .load(url)
+                .placeholder(R.drawable.shot_placeholder)
+                .into(shotViewHolder.image);
+
+
 
         shotViewHolder.cover.setOnClickListener(new View.OnClickListener() {
             @Override
