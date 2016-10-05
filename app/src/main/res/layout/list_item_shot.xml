@@ -14,14 +14,42 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white">
 
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/list_shot_image"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/list_shot_image_height"
-            fresco:actualImageScaleType="centerCrop"
-            fresco:placeholderImage="@drawable/shot_placeholder"
-            fresco:placeholderImageScaleType="centerCrop"
-            android:contentDescription="@string/shot_image" />
+            android:layout_height="wrap_content">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/list_shot_image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/list_shot_image_height"
+                fresco:actualImageScaleType="centerCrop"
+                fresco:placeholderImage="@drawable/shot_placeholder"
+                fresco:placeholderImageScaleType="centerCrop"
+                android:contentDescription="@string/shot_image" />
+
+            <FrameLayout
+                android:id="@+id/gif_label"
+                android:layout_width="@dimen/gif_label_size"
+                android:layout_height="@dimen/gif_label_size"
+                android:layout_marginRight="@dimen/spacing_small"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:layout_gravity="top|end"
+                android:visibility="invisible">
+
+                <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_gif_white_background_24dp" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_gif_white_24dp" />
+            </FrameLayout>
+
+        </FrameLayout>
+
 
         <RelativeLayout
             android:layout_width="match_parent"

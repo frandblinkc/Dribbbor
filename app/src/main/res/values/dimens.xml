@@ -28,4 +28,6 @@
     <dimen name="loading_item_height">36dp</dimen>
     <dimen name="loading_progressbar_size">24dp</dimen>
 
+    <dimen name="gif_label_size">24dp</dimen>
+
 </resources>

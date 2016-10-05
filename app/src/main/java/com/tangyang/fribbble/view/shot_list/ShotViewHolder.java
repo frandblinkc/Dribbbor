@@ -19,6 +19,7 @@ public class ShotViewHolder extends BaseViewHolder {
     @BindView(R.id.shot_view_count) TextView viewCount;
     @BindView(R.id.shot_bucket_count) TextView bucketCount;
     @BindView(R.id.list_shot_image) SimpleDraweeView image;
+    @BindView(R.id.gif_label) View gifLabel;
 
 
     public ShotViewHolder(View itemView) {

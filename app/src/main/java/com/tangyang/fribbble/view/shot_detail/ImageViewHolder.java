@@ -4,16 +4,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tangyang.fribbble.view.base.BaseViewHolder;
 
 /**
  * Created by YangTang on 9/27/2016.
  */
 public class ImageViewHolder extends RecyclerView.ViewHolder {
-    ImageView imageView;
+    SimpleDraweeView image;
 
     public ImageViewHolder(View itemView) {
         super(itemView);
-        imageView = (ImageView) itemView;
+        image = (SimpleDraweeView) itemView;
     }
 }

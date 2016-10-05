@@ -11,11 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.drawable.ProgressBarDrawable;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Shot;
+import com.tangyang.fribbble.utils.ImageUtils;
 import com.tangyang.fribbble.utils.ModelUtils;
 import com.tangyang.fribbble.view.shot_detail.ShotActivity;
 import com.tangyang.fribbble.view.shot_detail.ShotFragment;
@@ -78,12 +84,14 @@ public class ShotListAdapter extends RecyclerView.Adapter {
         shotViewHolder.viewCount.setText(String.valueOf(shot.views_count));
         shotViewHolder.bucketCount.setText(String.valueOf(shot.buckets_count));
 
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setUri(Uri.parse(shot.getImageUrl()))
-                .setAutoPlayAnimations(true)
-                .build();
+        // show gif label for .gif files
+        if (shot.getImageUrl().indexOf(".gif") != -1) {
+            shotViewHolder.gifLabel.setVisibility(View.VISIBLE);
+        }
 
-        shotViewHolder.image.setController(controller);
+        // load image
+        ImageUtils.loadImage(shot, shotViewHolder.image);
+
 
 
         shotViewHolder.cover.setOnClickListener(new View.OnClickListener() {

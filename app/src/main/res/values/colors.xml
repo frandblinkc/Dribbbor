@@ -6,4 +6,6 @@
 
     <color name="bucket_name_text_color">#cc000000</color>
     <color name="place_holder_bg">#33000000</color>
+
+    <color name="gif_label_background">#22000000</color>
 </resources>

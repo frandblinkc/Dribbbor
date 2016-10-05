@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Shot;
+import com.tangyang.fribbble.utils.ImageUtils;
 
 /**
  * Created by YangTang on 9/27/2016.
@@ -44,7 +45,7 @@ public class ShotAdapter extends RecyclerView.Adapter {
         int viewType = getItemViewType(position);
         switch(viewType) {
             case VIEW_TYPE_SHOT_IMAGE:
-                // do nothing, just show the inflated view, which is the ImageView in shot_item_image.xml
+                ImageUtils.loadImage(shot, ((ImageViewHolder) holder).image);
                 break;
             case VIEW_TYPE_SHOT_INFO:
                 InfoViewHolder shotDetailViewHolder = (InfoViewHolder) holder;
