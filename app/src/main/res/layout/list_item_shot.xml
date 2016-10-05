@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -13,13 +14,14 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/list_shot_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/list_shot_image_height"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/shot_image"
-            tools:src="@drawable/shot_placeholder"/>
+            fresco:actualImageScaleType="centerCrop"
+            fresco:placeholderImage="@drawable/shot_placeholder"
+            fresco:placeholderImageScaleType="centerCrop"
+            android:contentDescription="@string/shot_image" />
 
         <RelativeLayout
             android:layout_width="match_parent"

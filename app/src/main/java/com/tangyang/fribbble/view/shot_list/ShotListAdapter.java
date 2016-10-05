@@ -2,6 +2,7 @@ package com.tangyang.fribbble.view.shot_list;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 import com.tangyang.fribbble.R;
@@ -60,20 +63,27 @@ public class ShotListAdapter extends RecyclerView.Adapter {
         if (getItemViewType(position) == VIEW_TYPE_LOADING) {
             return;
         }
-        final Shot shot = data.get(position);
 
+        final Shot shot = data.get(position);
         ShotViewHolder shotViewHolder = (ShotViewHolder) holder;
+
+        // prevent Uri.parse(null) error
+        Log.d("frandblinkc", "loading url: " + shot.getImageUrl());
+        if (shot.getImageUrl() == null) {
+            shotViewHolder.itemView.setVisibility(View.GONE);
+            return;
+        }
+
         shotViewHolder.likeCount.setText(String.valueOf(shot.likes_count));
         shotViewHolder.viewCount.setText(String.valueOf(shot.views_count));
         shotViewHolder.bucketCount.setText(String.valueOf(shot.buckets_count));
 
-        String url = shot.getImageUrl();
-        Log.d("frandblinkc", "loading url: " + url);
-        Picasso.with(shotViewHolder.itemView.getContext())
-                .load(url)
-                .placeholder(R.drawable.shot_placeholder)
-                .into(shotViewHolder.image);
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setUri(Uri.parse(shot.getImageUrl()))
+                .setAutoPlayAnimations(true)
+                .build();
 
+        shotViewHolder.image.setController(controller);
 
 
         shotViewHolder.cover.setOnClickListener(new View.OnClickListener() {

@@ -1,6 +1,7 @@
 package com.tangyang.fribbble.model;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.Map;
@@ -35,15 +36,17 @@ public class Shot {
 
     @Nullable
     public String getImageUrl() {
+
         if (images == null) {
             return null;
-        } else if (animated) {
-            return images.get(IMAGE_NORMAL);
         }
 
-        return images.containsKey(IMAGE_HIDPI)
-                ? images.get(IMAGE_HIDPI)
-                : images.get(IMAGE_NORMAL);
+        if (images.containsKey(IMAGE_HIDPI) && images.get(IMAGE_HIDPI) != null) {
+            return images.get(IMAGE_HIDPI);
+        } else if (images.containsKey(IMAGE_NORMAL) && images.get(IMAGE_NORMAL) != null) {
+            return images.get(IMAGE_NORMAL);
+        }
+        return null;
     }
 
 

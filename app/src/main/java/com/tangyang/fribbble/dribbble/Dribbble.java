@@ -168,6 +168,7 @@ public class Dribbble {
         String url = SHOTS_END_POINT + "?page=" + page + "&per_page=" + SHOTS_PER_PAGE;
 
         Log.d("frandblinkc", "the url is: " + url);
+
         return parseResponse(makeGetRequest(url), SHOT_LIST_TYPE_TOKEN);
     }
 

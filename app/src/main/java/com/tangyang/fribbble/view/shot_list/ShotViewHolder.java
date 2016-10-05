@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.view.base.BaseViewHolder;
 
@@ -17,7 +18,7 @@ public class ShotViewHolder extends BaseViewHolder {
     @BindView(R.id.shot_like_count) TextView likeCount;
     @BindView(R.id.shot_view_count) TextView viewCount;
     @BindView(R.id.shot_bucket_count) TextView bucketCount;
-    @BindView(R.id.list_shot_image) ImageView image;
+    @BindView(R.id.list_shot_image) SimpleDraweeView image;
 
 
     public ShotViewHolder(View itemView) {
