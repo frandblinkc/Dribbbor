@@ -1,6 +1,8 @@
 package com.tangyang.fribbble.utils;
 
+import android.graphics.Color;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -33,9 +35,8 @@ public class ImageUtils {
 
         // add progressbar
         ProgressBarDrawable progressBarDrawable = new ProgressBarDrawable();
-        progressBarDrawable.setColor(R.color.colorPrimary);
-        progressBarDrawable.setBackgroundColor(R.color.colorPrimary);
+        progressBarDrawable.setColor(ContextCompat.getColor(image.getContext(), R.color.colorPrimary));
+
         image.getHierarchy().setProgressBarImage(progressBarDrawable);
-        Log.d("progressbar", "color is: " + progressBarDrawable.getColor() + ", background: " + progressBarDrawable.getBackgroundColor());
     }
 }
