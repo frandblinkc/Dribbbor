@@ -119,6 +119,8 @@ public class BucketListFragment extends Fragment{
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.save) {
             // todo: use intent to pass data to ShotActivity
+
+            getActivity().finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -1,5 +1,7 @@
 package com.tangyang.fribbble.view.shot_detail;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Shot;
 import com.tangyang.fribbble.utils.ImageUtils;
+import com.tangyang.fribbble.view.bucket_list.ChooseBucketActivity;
 
 /**
  * Created by YangTang on 9/27/2016.
@@ -56,6 +59,14 @@ public class ShotAdapter extends RecyclerView.Adapter {
                 shotDetailViewHolder.likesCount.setText(String.valueOf(shot.likes_count));
                 shotDetailViewHolder.bucketsCount.setText(String.valueOf(shot.buckets_count));
                 shotDetailViewHolder.viewsCount.setText(String.valueOf(shot.views_count));
+
+
+                shotDetailViewHolder.bucketButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bucket(view.getContext());
+                    }
+                });
                 break;
         }
     }
@@ -73,5 +84,12 @@ public class ShotAdapter extends RecyclerView.Adapter {
         } else {
             return VIEW_TYPE_SHOT_INFO;
         }
+    }
+
+
+    private void bucket(Context context) {
+        Intent intent = new Intent(context, ChooseBucketActivity.class);
+        // TODO: we need to pass in the chosen bucket ids here
+        context.startActivity(intent);
     }
 }
