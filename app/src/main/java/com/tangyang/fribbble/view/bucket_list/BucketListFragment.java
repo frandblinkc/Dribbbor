@@ -69,6 +69,13 @@ public class BucketListFragment extends Fragment{
         recyclerView.setAdapter(adapter);
 
         // TODO (Yang): fab.setOnClickListener
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NewBucketDialogFragment dialogFragment = NewBucketDialogFragment.newInstance();
+                dialogFragment.show(getFragmentManager(), NewBucketDialogFragment.TAG);
+            }
+        });
     }
 
     private class LoadBucketTask extends DribbbleTask<Void, Void, List<Bucket>> {
