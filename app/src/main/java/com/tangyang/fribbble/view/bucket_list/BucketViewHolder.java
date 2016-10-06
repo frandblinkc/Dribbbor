@@ -13,7 +13,7 @@ import butterknife.BindView;
  * Created by tangy on 9/16/2016.
  */
 public class BucketViewHolder extends BaseViewHolder {
-    @BindView(R.id.bucket_layout) View bucketLaout;
+    @BindView(R.id.bucket_layout) View bucketLayout;
     @BindView(R.id.bucket_name) TextView bucketName;
     @BindView(R.id.bucket_shot_count) TextView bucketShotCount;
     @BindView(R.id.bucket_chosen) ImageView bucketChosen;

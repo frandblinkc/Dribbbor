@@ -2,7 +2,6 @@ package com.tangyang.fribbble.view.shot_list;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,19 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.drawable.ProgressBarDrawable;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.squareup.picasso.Picasso;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Shot;
 import com.tangyang.fribbble.utils.ImageUtils;
 import com.tangyang.fribbble.utils.ModelUtils;
+import com.tangyang.fribbble.view.base.LoadMoreListener;
 import com.tangyang.fribbble.view.shot_detail.ShotActivity;
 import com.tangyang.fribbble.view.shot_detail.ShotFragment;
 
@@ -122,9 +114,7 @@ public class ShotListAdapter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
-    public interface LoadMoreListener {
-        void onLoadMore();
-    }
+
 
 
     public void setShowLoading(boolean showLoading) {

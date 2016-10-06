@@ -11,6 +11,7 @@ import android.webkit.CookieSyncManager;
 
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.tangyang.fribbble.model.Bucket;
 import com.tangyang.fribbble.model.Shot;
 import com.tangyang.fribbble.model.User;
 import com.tangyang.fribbble.utils.ModelUtils;
@@ -28,6 +29,7 @@ import okhttp3.Response;
 public class Dribbble {
 
     public static final int SHOTS_PER_PAGE = 20;
+    public static final int BUCKETS_PER_PAGE = 20;
 
     private static final String TAG = "Dribbble API";
 
@@ -41,6 +43,7 @@ public class Dribbble {
 
     private static final TypeToken<User> USER_TYPE_TOKEN = new TypeToken<User>(){};
     private static final TypeToken<List<Shot>> SHOT_LIST_TYPE_TOKEN = new TypeToken<List<Shot>>(){};
+    private static final TypeToken<List<Bucket>> BUCKET_LIST_TYPE_TOKEN = new TypeToken<List<Bucket>>(){};
 
     private static String accessToken;
     private static User user;
@@ -170,6 +173,17 @@ public class Dribbble {
         Log.d("frandblinkc", "the url is: " + url);
 
         return parseResponse(makeGetRequest(url), SHOT_LIST_TYPE_TOKEN);
+    }
+
+
+    // get buckets from Dribbble.com
+    public static List<Bucket> getBuckets(int page) throws IOException, JsonSyntaxException {
+        Log.d("frandblinkc", "inside Dribbble.getBuckets");
+        String url = USER_END_POINT + "/buckets?page=" + page + "&per_page=" + BUCKETS_PER_PAGE;
+
+        Log.d("frandblinkc", "the url is: " + url);
+
+        return parseResponse(makeGetRequest(url), BUCKET_LIST_TYPE_TOKEN);
     }
 
 

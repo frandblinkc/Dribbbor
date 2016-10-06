@@ -20,6 +20,7 @@ import com.google.gson.JsonSyntaxException;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.dribbble.Dribbble;
 import com.tangyang.fribbble.model.User;
+import com.tangyang.fribbble.view.base.LoadMoreListener;
 import com.tangyang.fribbble.view.base.SpaceItemDecoration;
 import com.tangyang.fribbble.model.Shot;
 
@@ -64,7 +65,7 @@ public class ShotListFragment extends Fragment {
         recyclerView.addItemDecoration(new SpaceItemDecoration(
                 getResources().getDimensionPixelSize(R.dimen.spacing_medium)));
 
-        adapter = new ShotListAdapter(new ArrayList<Shot>(), new ShotListAdapter.LoadMoreListener() {
+        adapter = new ShotListAdapter(new ArrayList<Shot>(), new LoadMoreListener() {
             @Override
             public void onLoadMore() {
                 // this method will be called when the RecyclerView is displayed

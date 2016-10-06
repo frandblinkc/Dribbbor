@@ -30,10 +30,10 @@ public class Auth {
 
 
     // use yours
-    private static final String CLIENT_ID = "0f956bed9f5051a9e65e879c485fd84653f9c8d145c120af9df76f16b34bea82";
+    private static final String CLIENT_ID = "ff4ce63cd789dcd1e49fbaed5d8b2068dac24abc0a5c199af6fa183210c1e444";
 
     // use yours
-    private static final String CLIENT_SECRET = "82c7dd5f3e57fc968f7cfafa75fb0f5cbd202855b2783020b89dd677bccdfda1";
+    private static final String CLIENT_SECRET = "1bb80eb88ad99e79f01c5da4c8fff71d51ac5b9e04599af8e3bd2e0870b3b2f2";
 
     // see http://developer.dribbble.com/v1/oauth/#scopes
     private static final String SCOPE = "public+write";
