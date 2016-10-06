@@ -1,7 +1,7 @@
 package com.tangyang.fribbble.view.bucket_list;
 
 
-import android.os.AsyncTask;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -10,22 +10,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.JsonSyntaxException;
+
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.dribbble.Dribbble;
-import com.tangyang.fribbble.view.base.LoadMoreListener;
+import com.tangyang.fribbble.dribbble.DribbbleException;
+import com.tangyang.fribbble.view.base.DribbbleTask;
+import com.tangyang.fribbble.view.base.EndlessListAdapter;
 import com.tangyang.fribbble.view.base.SpaceItemDecoration;
 import com.tangyang.fribbble.model.Bucket;
 
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +39,14 @@ public class BucketListFragment extends Fragment{
     @BindView(R.id.fab) FloatingActionButton fab;
 
     private BucketListAdapter adapter;
+
+    private EndlessListAdapter.LoadMoreListener loadMoreListener = new EndlessListAdapter.LoadMoreListener() {
+        @Override
+        public void onLoadMore() {
+            AsyncTaskCompat.executeParallel(new LoadBucketTask());
+        }
+    };
+
 
     public static BucketListFragment newInstance() { return new BucketListFragment(); }
 
@@ -56,56 +65,35 @@ public class BucketListFragment extends Fragment{
         recyclerView.addItemDecoration(new SpaceItemDecoration(
                 getResources().getDimensionPixelSize(R.dimen.spacing_medium)));
 
-        adapter = new BucketListAdapter(new ArrayList<Bucket>(), new LoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                // this method will be called when the RecyclerView is displayed
-                // page starts from 1
-                // Executes the task with the specified parameters, allowing multiple tasks to run in parallel
-                // on a pool of threads managed by {@link android.os.AsyncTask}.
-                AsyncTaskCompat.executeParallel(new LoadBucketTask(adapter.getDataCount() / Dribbble.BUCKETS_PER_PAGE + 1));
-            }
-        });
+        adapter = new BucketListAdapter(getContext(), new ArrayList<Bucket>(), loadMoreListener);
         recyclerView.setAdapter(adapter);
 
         // TODO (Yang): fab.setOnClickListener
     }
 
-    private class LoadBucketTask extends AsyncTask<Void, Void, List<Bucket>> {
-        int page;
+    private class LoadBucketTask extends DribbbleTask<Void, Void, List<Bucket>> {
 
-        public LoadBucketTask(int page) {
-            this.page = page;
+        @Override
+        protected List<Bucket> doJob(Void... params) throws DribbbleException {
+            final int page = adapter.getData().size() / Dribbble.BUCKETS_PER_PAGE + 1;
+            return Dribbble.getUserBuckets(page);
         }
 
         @Override
-        protected List<Bucket> doInBackground(Void... voids) {
-            Log.d("frandblinkc", "inside doInBackground of asyncTask loading buckets");
-            // this method executed on non-UI thread
-            try {
-                return Dribbble.getBuckets(page);
-            } catch (IOException | JsonSyntaxException e) {
-                e.printStackTrace();
-                return null;
+        protected void onSuccess(List<Bucket> buckets) {
+            adapter.setShowLoading(buckets.size() >= Dribbble.BUCKETS_PER_PAGE);
+            int k = adapter.getData().size() % Dribbble.BUCKETS_PER_PAGE;
+            for (int i = 0; i < k; i++){ // resume loading from an incomplete page, simply update current page
+                buckets.remove(0); // remove first k buckets that were already loaded
             }
+            adapter.append(buckets);
         }
 
         @Override
-        protected void onPostExecute(List<Bucket> buckets) {
-            // this method is executed on UI thread
-            Log.d("frandblinkc", "inside onPostExecute of asyncTask loading buckets");
-            if (buckets != null) {
-                if (!buckets.isEmpty()) {
-                    int k = adapter.getDataCount() % Dribbble.BUCKETS_PER_PAGE;
-                    for (int i = 0; i < k; i++){ // resume loading from an incomplete page, simply update current page
-                        buckets.remove(0); // remove first k buckets that were already loaded
-                    }
-                    adapter.append(buckets);
-                    adapter.setShowLoading(buckets.size() == Dribbble.BUCKETS_PER_PAGE);
-                }
-            } else {
-                Snackbar.make(getView(), "Error fetching shots!", Snackbar.LENGTH_LONG).show();
-            }
+        protected void onFailure(DribbbleException e) {
+            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
         }
+
+
     }
 }

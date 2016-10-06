@@ -13,6 +13,7 @@ import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.dribbble.Auth.Auth;
 import com.tangyang.fribbble.dribbble.Auth.AuthActivity;
 import com.tangyang.fribbble.dribbble.Dribbble;
+import com.tangyang.fribbble.dribbble.DribbbleException;
 
 import java.io.IOException;
 
@@ -76,12 +77,10 @@ public class LoginActivity extends AppCompatActivity{
                         Dribbble.login(LoginActivity.this, accessToken);
                         Log.d("frandblinkc", "access token is" + accessToken);
 
-                        Dribbble.login(LoginActivity.this, accessToken);
-
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
-                    } catch (IOException e) {
+                    } catch (IOException | DribbbleException e) {
                         e.printStackTrace();
                     }
                 }

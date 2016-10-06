@@ -60,22 +60,36 @@ public class Dribbble {
                 .url(url);
     }
 
-    private static Response makeRequest(Request request) throws IOException {
-        Response response = client.newCall(request).execute();
-        Log.d(TAG, response.header("X-RateLimit-Remaining"));
-        return response;
+    private static Response makeRequest(Request request) throws DribbbleException {
+        try {
+            Response response = client.newCall(request).execute();
+            Log.d(TAG, response.header("X-RateLimit-Remaining"));
+            return response;
+        } catch (IOException e) {
+            throw new DribbbleException(e.getMessage());
+        }
     }
 
-    private static Response makeGetRequest(String url) throws  IOException{
+    private static Response makeGetRequest(String url) throws  DribbbleException{
         Request request = authRequestBuilder(url).build();
         return makeRequest(request);
     }
 
     private static <T> T parseResponse(Response response,
-                                       TypeToken<T> typeToken) throws IOException, JsonSyntaxException {
-        String responseString = response.body().string();
+                                       TypeToken<T> typeToken) throws DribbbleException{
+        String responseString;
+        try {
+            responseString = response.body().string();
+        } catch (IOException e) {
+            throw new DribbbleException(e.getMessage());
+        }
         Log.d(TAG, responseString);
-        return ModelUtils.toObject(responseString, typeToken);
+
+        try {
+            return ModelUtils.toObject(responseString, typeToken);
+        } catch (JsonSyntaxException e) {
+            throw new DribbbleException(e.getMessage());
+        }
     }
 
 
@@ -116,7 +130,7 @@ public class Dribbble {
     }
 
     public static void login(@NonNull Context context, @NonNull String accessToken)
-                                throws IOException, JsonSyntaxException {
+                                throws DribbbleException {
         Dribbble.accessToken = accessToken;
         storeAccessToken(context, accessToken);
 
@@ -156,7 +170,7 @@ public class Dribbble {
 
 
     // get user from Dribbble.com
-    public static User getUser() throws IOException, JsonSyntaxException {
+    public static User getUser() throws DribbbleException {
         return parseResponse(makeGetRequest(USER_END_POINT), USER_TYPE_TOKEN);
     }
 
@@ -166,7 +180,7 @@ public class Dribbble {
     }
 
     // get shots from Dribbble.com
-    public static List<Shot> getShots(int page) throws IOException, JsonSyntaxException {
+    public static List<Shot> getShots(int page) throws DribbbleException {
         Log.d("frandblinkc", "inside Dribbble.getShots");
         String url = SHOTS_END_POINT + "?page=" + page + "&per_page=" + SHOTS_PER_PAGE;
 
@@ -177,12 +191,8 @@ public class Dribbble {
 
 
     // get buckets from Dribbble.com
-    public static List<Bucket> getBuckets(int page) throws IOException, JsonSyntaxException {
-        Log.d("frandblinkc", "inside Dribbble.getBuckets");
+    public static List<Bucket> getUserBuckets(int page) throws DribbbleException {
         String url = USER_END_POINT + "/buckets?page=" + page + "&per_page=" + BUCKETS_PER_PAGE;
-
-        Log.d("frandblinkc", "the url is: " + url);
-
         return parseResponse(makeGetRequest(url), BUCKET_LIST_TYPE_TOKEN);
     }
 

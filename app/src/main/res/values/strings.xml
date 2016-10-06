@@ -14,7 +14,8 @@
     <string name="close_drawer">close drawer</string>
 
 
-    <string name="shot_count">{0,choice,0#0 shot|1#1 shot|1&lt;{0} shots}</string>
+    <string name="shot_count_single">%1$d shot</string>
+    <string name="shot_count_plural">%1$d shots</string>
 
     <string name="activity_login_icon">Dribbble icon</string>
     <string name="activity_login_button_text">Login to Dribbble</string>

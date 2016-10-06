@@ -14,7 +14,8 @@ import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Shot;
 import com.tangyang.fribbble.utils.ImageUtils;
 import com.tangyang.fribbble.utils.ModelUtils;
-import com.tangyang.fribbble.view.base.LoadMoreListener;
+import com.tangyang.fribbble.view.base.BaseViewHolder;
+import com.tangyang.fribbble.view.base.EndlessListAdapter;
 import com.tangyang.fribbble.view.shot_detail.ShotActivity;
 import com.tangyang.fribbble.view.shot_detail.ShotFragment;
 
@@ -24,45 +25,26 @@ import java.util.List;
 /**
  * Created by tangy on 9/14/2016.
  */
-public class ShotListAdapter extends RecyclerView.Adapter {
-    private static final int VIEW_TYPE_SHOT = 0;
-    private static final int VIEW_TYPE_LOADING = 1;
+public class ShotListAdapter extends EndlessListAdapter<Shot> {
+    private final ShotListFragment shotListFragment;
 
-    private List<Shot> data;
-    private LoadMoreListener loadMoreListener;
-    private boolean showLoading;
-
-    public ShotListAdapter(@NonNull  List<Shot> data, @NonNull LoadMoreListener loadMoreListener) {
-        this.data = data;
-        this.loadMoreListener = loadMoreListener;
-        this.showLoading = true;
+    public ShotListAdapter(@NonNull ShotListFragment shotListFragment,
+                           @NonNull List<Shot> data,
+                           @NonNull LoadMoreListener loadMoreListener) {
+        super(shotListFragment.getContext(), data, loadMoreListener);
+        this.shotListFragment = shotListFragment;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == VIEW_TYPE_SHOT) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item_shot, parent, false);
-            return new ShotViewHolder(view);
-        } else {
-            View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.list_item_loading, parent, false);
-            return new RecyclerView.ViewHolder(view) {}; //create an anonymous subclass and instantiate it
-        }
+    protected BaseViewHolder onCreateItemViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.list_item_shot, parent, false);
+        return new ShotViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        // fire onLoadMore() at the beginning when starting to display last item
-        if (data.size() == 0 || position == data.size() - 1) {
-            loadMoreListener.onLoadMore();
-        }
-
-        if (getItemViewType(position) == VIEW_TYPE_LOADING) {
-            return;
-        }
-
-        final Shot shot = data.get(position);
+    protected void onBindItemViewHolder(BaseViewHolder holder, int position) {
+        final Shot shot = getData().get(position);
         ShotViewHolder shotViewHolder = (ShotViewHolder) holder;
 
         // prevent Uri.parse(null) error
@@ -89,40 +71,13 @@ public class ShotListAdapter extends RecyclerView.Adapter {
         shotViewHolder.cover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Context context = holder.itemView.getContext();
-                Intent intent = new Intent(context, ShotActivity.class);
+                Intent intent = new Intent(getContext(), ShotActivity.class);
                 intent.putExtra(ShotFragment.KEY_SHOT,
                         ModelUtils.toString(shot, new TypeToken<Shot>(){}));
                 intent.putExtra(ShotActivity.KEY_SHOT_TITLE, shot.title);
-                context.startActivity(intent);
+                shotListFragment.startActivity(intent);
             }
         });
     }
 
-    @Override
-    public int getItemCount() {
-        return showLoading? data.size() + 1: data.size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position < data.size()? VIEW_TYPE_SHOT: VIEW_TYPE_LOADING;
-    }
-
-    public void append(@NonNull List<Shot> moreShots) {
-        data.addAll(moreShots);
-        notifyDataSetChanged();
-    }
-
-
-
-
-    public void setShowLoading(boolean showLoading) {
-        this.showLoading = showLoading;
-        notifyDataSetChanged();
-    }
-
-    public int getDataCount() {
-        return data.size();
-    }
 }
