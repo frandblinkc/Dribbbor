@@ -3,6 +3,7 @@ package com.tangyang.fribbble.view.base;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ public abstract class EndlessListAdapter<M> extends RecyclerView.Adapter<BaseVie
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
+        Log.d("frandblinkc", "binding bucket position: " + position);
         // fire onLoadMore() at the beginning when starting to display last item
         if (data.size() == 0 || position == data.size() - 1) {
             loadMoreListener.onLoadMore();
@@ -72,11 +74,19 @@ public abstract class EndlessListAdapter<M> extends RecyclerView.Adapter<BaseVie
     }
 
     public void append(@NonNull List<M> moreData) {
+        Log.d("frandblinkc", "appending loaded items, size: " + moreData.size());
+        if (moreData.isEmpty()) {
+            return;
+        }
         data.addAll(moreData);
         notifyDataSetChanged();
+        Log.d("frandblinkc", "after notifying datachanged to append data size: " + moreData.size());
     }
 
     public void prepend(@NonNull List<M> moreData) {
+        if (moreData.isEmpty()) {
+            return;
+        }
         data.addAll(0, moreData);
         notifyDataSetChanged();
     }
@@ -92,6 +102,9 @@ public abstract class EndlessListAdapter<M> extends RecyclerView.Adapter<BaseVie
     }
 
     public void setShowLoading(boolean showLoading) {
+        if(showLoading == this.showLoading) {
+            return;
+        }
         this.showLoading = showLoading;
         notifyDataSetChanged();
     }

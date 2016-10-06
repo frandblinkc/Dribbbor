@@ -45,6 +45,7 @@ public class BucketListFragment extends Fragment{
     @BindView(R.id.fab) FloatingActionButton fab;
 
     private BucketListAdapter adapter;
+    private boolean isChoosingMode;
 
     private EndlessListAdapter.LoadMoreListener loadMoreListener = new EndlessListAdapter.LoadMoreListener() {
         @Override
@@ -71,7 +72,8 @@ public class BucketListFragment extends Fragment{
         recyclerView.addItemDecoration(new SpaceItemDecoration(
                 getResources().getDimensionPixelSize(R.dimen.spacing_medium)));
 
-        adapter = new BucketListAdapter(getContext(), new ArrayList<Bucket>(), loadMoreListener);
+//        adapter = new BucketListAdapter(getContext(), new ArrayList<Bucket>(), loadMoreListener, isChoosingMode);
+        adapter = new BucketListAdapter(getContext(), new ArrayList<Bucket>(), loadMoreListener, true);
         recyclerView.setAdapter(adapter);
 
         // TODO (Yang): fab.setOnClickListener

@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_check_box_outline_blank_black_24dp"/>
+            android:src="@drawable/ic_check_box_outline_blank_black_36dp"/>
 
     </RelativeLayout>
 
