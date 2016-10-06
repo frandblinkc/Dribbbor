@@ -18,11 +18,12 @@ import java.util.List;
 public abstract class EndlessListAdapter<M> extends RecyclerView.Adapter<BaseViewHolder> {
     private static final int VIEW_TYPE_ITEM = 0;
     private static final int VIEW_TYPE_LOADING = 1;
+    private static final int VIEW_TYPE_FOOTER = 2;
 
     private List<M> data;
     private final Context context;
-
     private boolean showLoading;
+
     private final LoadMoreListener loadMoreListener;
 
     public EndlessListAdapter (@NonNull Context context,
@@ -39,6 +40,9 @@ public abstract class EndlessListAdapter<M> extends RecyclerView.Adapter<BaseVie
         if (viewType == VIEW_TYPE_LOADING) {
             View view = LayoutInflater.from(context).inflate(R.layout.list_item_loading,parent, false);
             return new BaseViewHolder(view);
+        } else if (viewType == VIEW_TYPE_FOOTER) {
+            View view = LayoutInflater.from(context).inflate(R.layout.list_item_footer, parent, false);
+            return new BaseViewHolder(view);
         } else {
             return onCreateItemViewHolder(parent, viewType);
         }
@@ -52,7 +56,7 @@ public abstract class EndlessListAdapter<M> extends RecyclerView.Adapter<BaseVie
             loadMoreListener.onLoadMore();
         }
 
-        if (getItemViewType(position) == VIEW_TYPE_LOADING) {
+        if (getItemViewType(position) != VIEW_TYPE_ITEM) {
             return;
         }
 
@@ -61,7 +65,8 @@ public abstract class EndlessListAdapter<M> extends RecyclerView.Adapter<BaseVie
 
     @Override
     public int getItemCount() {
-        return showLoading? data.size() + 1: data.size();
+        // either show loading or footer
+        return data.size() + 1;
     }
 
     @Override
@@ -69,7 +74,7 @@ public abstract class EndlessListAdapter<M> extends RecyclerView.Adapter<BaseVie
         if (showLoading) {
             return position < data.size()? VIEW_TYPE_ITEM: VIEW_TYPE_LOADING;
         } else {
-            return VIEW_TYPE_ITEM;
+            return position < data.size()? VIEW_TYPE_ITEM: VIEW_TYPE_FOOTER;
         }
     }
 

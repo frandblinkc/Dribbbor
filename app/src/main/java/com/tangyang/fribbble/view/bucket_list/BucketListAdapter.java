@@ -52,7 +52,7 @@ public class BucketListAdapter extends EndlessListAdapter<Bucket> {
                     bucket.isChosen
                                 ? ContextCompat.getDrawable(context, R.drawable.ic_check_box_black_36dp)
                                 : ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank_black_36dp));
-            bucketViewHolder.bucketChosen.setOnClickListener(new View.OnClickListener() {
+            bucketViewHolder.bucketLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     bucket.isChosen = !bucket.isChosen;
@@ -88,4 +88,6 @@ public class BucketListAdapter extends EndlessListAdapter<Bucket> {
         }
         return selectedBucketIds;
     }
+
+
 }
