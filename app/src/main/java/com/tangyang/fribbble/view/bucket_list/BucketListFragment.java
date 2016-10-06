@@ -15,6 +15,9 @@ import android.support.v7.widget.RecyclerView;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -41,6 +44,9 @@ import butterknife.ButterKnife;
 public class BucketListFragment extends Fragment{
     public static final int REQ_CODE_NEW_BUCKET = 100;
 
+    public static final String KEY_CHOOSING_MODE = "choosing_mode";
+
+
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
     @BindView(R.id.fab) FloatingActionButton fab;
 
@@ -55,7 +61,21 @@ public class BucketListFragment extends Fragment{
     };
 
 
-    public static BucketListFragment newInstance() { return new BucketListFragment(); }
+    public static BucketListFragment newInstance(boolean isChoosingMode) {
+        Bundle args = new Bundle();
+        args.putBoolean(KEY_CHOOSING_MODE, isChoosingMode);
+
+        BucketListFragment bucketListFragment = new BucketListFragment();
+        bucketListFragment.setArguments(args);
+        return bucketListFragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -68,6 +88,8 @@ public class BucketListFragment extends Fragment{
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        isChoosingMode = getArguments().getBoolean(KEY_CHOOSING_MODE);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new SpaceItemDecoration(
                 getResources().getDimensionPixelSize(R.dimen.spacing_medium)));
@@ -76,7 +98,6 @@ public class BucketListFragment extends Fragment{
         adapter = new BucketListAdapter(getContext(), new ArrayList<Bucket>(), loadMoreListener, true);
         recyclerView.setAdapter(adapter);
 
-        // TODO (Yang): fab.setOnClickListener
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,6 +106,22 @@ public class BucketListFragment extends Fragment{
                 dialogFragment.show(getFragmentManager(), NewBucketDialogFragment.TAG);
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (isChoosingMode) {
+            inflater.inflate(R.menu.bucket_list_choose_mode_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.save) {
+            // todo: use intent to pass data to ShotActivity
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

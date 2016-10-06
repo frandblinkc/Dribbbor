@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.drawer_item_buckets:
-                        fragment = new BucketListFragment().newInstance();
+                        fragment = new BucketListFragment().newInstance(true);
                         setTitle(R.string.title_buckets);
                         break;
                 }
