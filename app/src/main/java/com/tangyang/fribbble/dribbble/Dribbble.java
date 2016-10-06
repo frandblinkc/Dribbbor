@@ -19,8 +19,10 @@ import com.tangyang.fribbble.utils.ModelUtils;
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -36,12 +38,17 @@ public class Dribbble {
     private static final String API_URL = "https://api.dribbble.com/v1/";
     private static final String USER_END_POINT = API_URL + "user";
     private static final String SHOTS_END_POINT = API_URL + "shots";
+    private static final String BUCKETS_END_POINT = API_URL + "buckets";
 
     private static final String SP_AUTH = "auth";
     private static final String KEY_ACCESS_TOKEN = "access_token";
     private static final String KEY_USER = "user";
+    private static final String KEY_NAME = "name";
+    private static final String KEY_DESCRIPTION = "description";
+
 
     private static final TypeToken<User> USER_TYPE_TOKEN = new TypeToken<User>(){};
+    private static final TypeToken<Bucket> BUCKET_TYPE_TOKEN = new TypeToken<Bucket>() {};
     private static final TypeToken<List<Shot>> SHOT_LIST_TYPE_TOKEN = new TypeToken<List<Shot>>(){};
     private static final TypeToken<List<Bucket>> BUCKET_LIST_TYPE_TOKEN = new TypeToken<List<Bucket>>(){};
 
@@ -72,6 +79,13 @@ public class Dribbble {
 
     private static Response makeGetRequest(String url) throws  DribbbleException{
         Request request = authRequestBuilder(url).build();
+        return makeRequest(request);
+    }
+
+    private static Response makePostRequest(String url, RequestBody requestBody) throws DribbbleException {
+        Request request = authRequestBuilder(url)
+                            .post(requestBody)
+                            .build();
         return makeRequest(request);
     }
 
@@ -196,5 +210,13 @@ public class Dribbble {
         return parseResponse(makeGetRequest(url), BUCKET_LIST_TYPE_TOKEN);
     }
 
+    public static Bucket newBucket(@NonNull String name, @NonNull String description)
+                                                            throws DribbbleException {
+        FormBody formBody = new FormBody.Builder()
+                                    .add(KEY_NAME, name)
+                                    .add(KEY_DESCRIPTION, description)
+                                    .build();
+        return parseResponse(makePostRequest(BUCKETS_END_POINT, formBody), BUCKET_TYPE_TOKEN);
 
+    }
 }
