@@ -95,17 +95,17 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment = null;
                 switch (item.getItemId()) {
                     case R.id.drawer_item_home:
-                        fragment = new ShotListFragment().newInstance();
+                        fragment = ShotListFragment.newInstance();
                         setTitle(R.string.title_home);
                         break;
 
                     case R.id.drawer_item_likes:
-                        fragment = new ShotListFragment().newInstance();
+                        fragment = ShotListFragment.newInstance();
                         setTitle(R.string.title_likes);
                         break;
 
                     case R.id.drawer_item_buckets:
-                        fragment = new BucketListFragment().newInstance(true);
+                        fragment = BucketListFragment.newInstance(false, null);
                         setTitle(R.string.title_buckets);
                         break;
                 }

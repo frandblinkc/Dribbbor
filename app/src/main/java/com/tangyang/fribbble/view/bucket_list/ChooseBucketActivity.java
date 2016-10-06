@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.view.base.SingleFragmentActivity;
 
+import java.util.ArrayList;
+
 /**
  * Created by YangTang on 10/6/2016.
  */
@@ -14,7 +16,9 @@ public class ChooseBucketActivity extends SingleFragmentActivity {
     @NonNull
     @Override
     protected Fragment newFragment() {
-        return BucketListFragment.newInstance(true);
+        ArrayList<String> chosenBucketIds = getIntent().getStringArrayListExtra(
+                            BucketListFragment.KEY_CHOSEN_BUCKET_IDS);
+        return BucketListFragment.newInstance(true, chosenBucketIds);
     }
 
     @NonNull

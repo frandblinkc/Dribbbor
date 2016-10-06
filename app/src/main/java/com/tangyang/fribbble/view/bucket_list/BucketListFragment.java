@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,13 +46,14 @@ public class BucketListFragment extends Fragment{
     public static final int REQ_CODE_NEW_BUCKET = 100;
 
     public static final String KEY_CHOOSING_MODE = "choosing_mode";
-
+    public static final String KEY_CHOSEN_BUCKET_IDS = "chosen_bucket_ids";
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
     @BindView(R.id.fab) FloatingActionButton fab;
 
     private BucketListAdapter adapter;
     private boolean isChoosingMode;
+    private ArrayList<String> chosenBucketIds;
 
     private EndlessListAdapter.LoadMoreListener loadMoreListener = new EndlessListAdapter.LoadMoreListener() {
         @Override
@@ -61,9 +63,11 @@ public class BucketListFragment extends Fragment{
     };
 
 
-    public static BucketListFragment newInstance(boolean isChoosingMode) {
+    public static BucketListFragment newInstance(boolean isChoosingMode,
+                                                 @Nullable ArrayList<String> chosenBucketIds ) {
         Bundle args = new Bundle();
         args.putBoolean(KEY_CHOOSING_MODE, isChoosingMode);
+        args.putStringArrayList(KEY_CHOSEN_BUCKET_IDS, chosenBucketIds);
 
         BucketListFragment bucketListFragment = new BucketListFragment();
         bucketListFragment.setArguments(args);
@@ -89,13 +93,18 @@ public class BucketListFragment extends Fragment{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         isChoosingMode = getArguments().getBoolean(KEY_CHOOSING_MODE);
+        if (isChoosingMode) {
+            chosenBucketIds = getArguments().getStringArrayList(KEY_CHOSEN_BUCKET_IDS);
+            if (chosenBucketIds == null) {
+                chosenBucketIds = new ArrayList<>();
+            }
+        }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new SpaceItemDecoration(
                 getResources().getDimensionPixelSize(R.dimen.spacing_medium)));
 
-//        adapter = new BucketListAdapter(getContext(), new ArrayList<Bucket>(), loadMoreListener, isChoosingMode);
-        adapter = new BucketListAdapter(getContext(), new ArrayList<Bucket>(), loadMoreListener, true);
+        adapter = new BucketListAdapter(getContext(), new ArrayList<Bucket>(), loadMoreListener, isChoosingMode);
         recyclerView.setAdapter(adapter);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -118,8 +127,11 @@ public class BucketListFragment extends Fragment{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.save) {
-            // todo: use intent to pass data to ShotActivity
-
+            ArrayList<String> chosenBucketIds = adapter.getSelectedBucketIds();
+            Log.d("frandblinkc", "returning from ChooseBucketActivity with chosen buckets number: " + chosenBucketIds.size());
+            Intent intent = new Intent();
+            intent.putStringArrayListExtra(KEY_CHOSEN_BUCKET_IDS, chosenBucketIds);
+            getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
             return true;
         }
@@ -147,6 +159,17 @@ public class BucketListFragment extends Fragment{
 
         @Override
         protected void onSuccess(List<Bucket> buckets) {
+            if (buckets == null) {
+                return;
+            }
+
+            if (isChoosingMode) {
+                for (Bucket bucket: buckets) {
+                    if (chosenBucketIds.contains(bucket.id)) {
+                        bucket.isChosen = true;
+                    }
+                }
+            }
             adapter.setShowLoading(buckets.size() >= Dribbble.BUCKETS_PER_PAGE);
             int k = adapter.getData().size() % Dribbble.BUCKETS_PER_PAGE;
             for (int i = 0; i < k; i++){ // resume loading from an incomplete page, simply update current page

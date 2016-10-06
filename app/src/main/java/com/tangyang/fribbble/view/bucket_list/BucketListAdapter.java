@@ -13,6 +13,7 @@ import com.tangyang.fribbble.model.Bucket;
 import com.tangyang.fribbble.view.base.BaseViewHolder;
 import com.tangyang.fribbble.view.base.EndlessListAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,5 +77,15 @@ public class BucketListAdapter extends EndlessListAdapter<Bucket> {
         return shotCount <= 1
                 ? getContext().getString(R.string.shot_count_single, shotCount)
                 : getContext().getString(R.string.shot_count_plural, shotCount);
+    }
+
+    public ArrayList<String> getSelectedBucketIds() {
+        ArrayList<String> selectedBucketIds = new ArrayList<>();
+        for (Bucket bucket: getData()) {
+            if (bucket.isChosen) {
+                selectedBucketIds.add(bucket.id);
+            }
+        }
+        return selectedBucketIds;
     }
 }

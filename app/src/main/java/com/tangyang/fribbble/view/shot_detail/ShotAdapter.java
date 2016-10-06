@@ -11,7 +11,12 @@ import android.view.ViewGroup;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Shot;
 import com.tangyang.fribbble.utils.ImageUtils;
+import com.tangyang.fribbble.view.bucket_list.BucketListFragment;
 import com.tangyang.fribbble.view.bucket_list.ChooseBucketActivity;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by YangTang on 9/27/2016.
@@ -20,10 +25,14 @@ public class ShotAdapter extends RecyclerView.Adapter {
     public static final int VIEW_TYPE_SHOT_IMAGE = 0;
     public static final int VIEW_TYPE_SHOT_INFO = 1;
 
-    private Shot shot;
+    private final Shot shot;
+    private final ShotFragment shotFragment;
+    private ArrayList<String> collectedBucketIds;
 
-    public ShotAdapter(@NonNull Shot shot) {
+    public ShotAdapter(@NonNull ShotFragment shotFragment, @NonNull Shot shot) {
+        this.shotFragment = shotFragment;
         this.shot = shot;
+        this.collectedBucketIds = null;
     }
 
     @Override
@@ -88,8 +97,47 @@ public class ShotAdapter extends RecyclerView.Adapter {
 
 
     private void bucket(Context context) {
-        Intent intent = new Intent(context, ChooseBucketActivity.class);
-        // TODO: we need to pass in the chosen bucket ids here
-        context.startActivity(intent);
+        if (collectedBucketIds != null) {// == null means we are still loading
+            Intent intent = new Intent(context, ChooseBucketActivity.class);
+
+            intent.putStringArrayListExtra(BucketListFragment.KEY_CHOSEN_BUCKET_IDS, collectedBucketIds);
+            shotFragment.startActivityForResult(intent, ShotFragment.REQ_CODE_BUCKET);
+        }
+
+    }
+
+    // update the list of collected bucket ids for current shot
+    public void updateCollectedBucketIds(@NonNull List<String> bucketIds) {
+        if (collectedBucketIds == null) {
+            collectedBucketIds = new ArrayList<>();
+        }
+
+        collectedBucketIds.clear();
+        collectedBucketIds.addAll(bucketIds);
+
+        shot.bucketed = !bucketIds.isEmpty();
+        notifyDataSetChanged();
+    }
+
+    // update the list of collected bucket ids for current shot, with addedIds and removedIds
+    public void updateCollectedBucketIds(List<String> addedIds, List<String> removedIds) {
+        if (collectedBucketIds == null) {
+            collectedBucketIds = new ArrayList<>();
+        }
+
+        if (addedIds.isEmpty() && removedIds.isEmpty()) {
+            return;
+        }
+
+        collectedBucketIds.addAll(addedIds);
+        collectedBucketIds.removeAll(removedIds);
+
+        shot.bucketed = !collectedBucketIds.isEmpty();
+        shot.buckets_count += addedIds.size() - removedIds.size(); // update locally, no need to reload
+        notifyDataSetChanged();
+    }
+
+    public List<String> getReadOnlyCollectedBucketIds() {
+        return Collections.unmodifiableList(collectedBucketIds);
     }
 }
