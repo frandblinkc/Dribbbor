@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.os.AsyncTaskCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -50,6 +51,7 @@ public class BucketListFragment extends Fragment{
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
     @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.swipe_refresh_container) SwipeRefreshLayout swipeRefreshLayout;
 
     private BucketListAdapter adapter;
     private boolean isChoosingMode;
@@ -58,7 +60,7 @@ public class BucketListFragment extends Fragment{
     private EndlessListAdapter.LoadMoreListener loadMoreListener = new EndlessListAdapter.LoadMoreListener() {
         @Override
         public void onLoadMore() {
-            AsyncTaskCompat.executeParallel(new LoadBucketTask());
+            AsyncTaskCompat.executeParallel(new LoadBucketTask(false));
         }
     };
 
@@ -99,6 +101,14 @@ public class BucketListFragment extends Fragment{
                 chosenBucketIds = new ArrayList<>();
             }
         }
+
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                AsyncTaskCompat.executeParallel(new LoadBucketTask(true));
+            }
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new SpaceItemDecoration(
@@ -150,10 +160,15 @@ public class BucketListFragment extends Fragment{
     }
 
     private class LoadBucketTask extends DribbbleTask<Void, Void, List<Bucket>> {
+        private boolean refresh;
+
+        public LoadBucketTask(boolean refresh) {
+            this.refresh = refresh;
+        }
 
         @Override
         protected List<Bucket> doJob(Void... params) throws DribbbleException {
-            final int page = adapter.getData().size() / Dribbble.BUCKETS_PER_PAGE + 1;
+            final int page = refresh? 1: adapter.getData().size() / Dribbble.BUCKETS_PER_PAGE + 1;
             return Dribbble.getUserBuckets(page);
         }
 
@@ -175,7 +190,14 @@ public class BucketListFragment extends Fragment{
             for (int i = 0; i < k; i++){ // resume loading from an incomplete page, simply update current page
                 buckets.remove(0); // remove first k buckets that were already loaded
             }
-            adapter.append(buckets);
+
+            if (refresh) {
+                swipeRefreshLayout.setRefreshing(false);
+                adapter.setData(buckets);
+            } else {
+                swipeRefreshLayout.setEnabled(true);
+                adapter.append(buckets);
+            }
         }
 
         @Override
