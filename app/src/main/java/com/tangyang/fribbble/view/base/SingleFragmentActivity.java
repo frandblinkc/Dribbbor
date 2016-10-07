@@ -33,7 +33,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, newFragment())
+                    .replace(R.id.fragment_container, newFragment())
                     .commit();
         }
     }
