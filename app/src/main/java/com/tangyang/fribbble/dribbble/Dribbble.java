@@ -225,6 +225,14 @@ public class Dribbble {
         return parseResponse(makeGetRequest(url), SHOT_LIST_TYPE_TOKEN);
     }
 
+    // get shots in bucket
+    public static List<Shot> getBucketShots(String bucketId, int page) throws DribbbleException {
+        Log.d("frandblinkc", "inside Dribbble.getBucketShots");
+        String url = BUCKETS_END_POINT + "/" + bucketId + "/shots?page=" + page + "&per_page=" + SHOTS_PER_PAGE;
+        Log.d("frandblinkc", "the url is: " + url);
+        return parseResponse(makeGetRequest(url), SHOT_LIST_TYPE_TOKEN);
+    }
+
 
 
     // get all of  current user's buckets from Dribbble.com

@@ -2,6 +2,7 @@ package com.tangyang.fribbble.view.shot_list;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -34,9 +35,18 @@ import butterknife.ButterKnife;
  */
 public class ShotListFragment extends Fragment {
 
+    public static final String KEY_BUCKET_ID = "bucket_id";
+    public static final String KEY_LIST_TYPE = "list_type";
+
+    public static final int LIST_TYPE_POPULAR = 0;
+    public static final int LIST_TYPE_LIKEED = 1;
+    public static final int LIST_TYPE_BUCKET = 2;
+
+
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
 
     private ShotListAdapter adapter;
+    private int listType;
 
     private EndlessListAdapter.LoadMoreListener loadMoreListener = new EndlessListAdapter.LoadMoreListener() {
         @Override
@@ -49,8 +59,23 @@ public class ShotListFragment extends Fragment {
 
 
 
-    public static ShotListFragment newInstance() {
-        return new ShotListFragment();
+    public static ShotListFragment newInstance(int listType) {
+        Bundle args = new Bundle();
+        args.putInt(KEY_LIST_TYPE, listType);
+
+        ShotListFragment fragment = new ShotListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static ShotListFragment newBucketShotListInstance(@NonNull String bucketId) {
+        Bundle args = new Bundle();
+        args.putInt(KEY_LIST_TYPE, LIST_TYPE_BUCKET);
+        args.putString(KEY_BUCKET_ID, bucketId);
+
+        ShotListFragment fragment = new ShotListFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
@@ -68,6 +93,8 @@ public class ShotListFragment extends Fragment {
     @Override
     // Any view setup should occur here, e.g. view lookups and attaching view listeners
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        listType = getArguments().getInt(KEY_LIST_TYPE);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         recyclerView.addItemDecoration(new SpaceItemDecoration(
@@ -85,7 +112,15 @@ public class ShotListFragment extends Fragment {
         @Override
         protected List<Shot> doJob(Void... params) throws DribbbleException {
             int page = adapter.getData().size() / Dribbble.SHOTS_PER_PAGE + 1;
-            return Dribbble.getShots(page);
+            switch(listType) {
+                case LIST_TYPE_POPULAR:
+                    return Dribbble.getShots(page);
+                case LIST_TYPE_BUCKET:
+                    String bucketId = getArguments().getString(KEY_BUCKET_ID);
+                    return Dribbble.getBucketShots(bucketId, page);
+                default:
+                    return Dribbble.getShots(page);
+            }
         }
 
         @Override

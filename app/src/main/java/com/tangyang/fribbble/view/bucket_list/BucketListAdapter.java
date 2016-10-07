@@ -1,6 +1,7 @@
 package com.tangyang.fribbble.view.bucket_list;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -12,6 +13,7 @@ import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Bucket;
 import com.tangyang.fribbble.view.base.BaseViewHolder;
 import com.tangyang.fribbble.view.base.EndlessListAdapter;
+import com.tangyang.fribbble.view.shot_list.ShotListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,7 @@ public class BucketListAdapter extends EndlessListAdapter<Bucket> {
     protected void onBindItemViewHolder(BaseViewHolder holder, final int position) {
         final Bucket bucket = getData().get(position);
         BucketViewHolder bucketViewHolder = (BucketViewHolder) holder;
-        Context context = holder.itemView.getContext();
+        final Context context = holder.itemView.getContext();
 
         bucketViewHolder.bucketName.setText(bucket.name);
         bucketViewHolder.bucketShotCount.setText(formatShotCount(bucket.shots_count));
@@ -62,11 +64,13 @@ public class BucketListAdapter extends EndlessListAdapter<Bucket> {
             });
         } else {
             bucketViewHolder.bucketChosen.setVisibility(View.GONE);
-            bucketViewHolder.bucketChosen.setOnClickListener(new View.OnClickListener() {
+            bucketViewHolder.bucketLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: if not in choosing mode, we need to open a new activity to show what
-                    // shots are there inside the bucket
+                    Intent intent = new Intent(getContext(), BucketShotListActivity.class);
+                    intent.putExtra(ShotListFragment.KEY_BUCKET_ID, bucket.id);
+                    intent.putExtra(BucketShotListActivity.KEY_BUCKET_NAME, bucket.name);
+                    getContext().startActivity(intent);
                 }
             });
         }
