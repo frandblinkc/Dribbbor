@@ -2,7 +2,9 @@ package com.tangyang.fribbble.view.shot_detail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,6 +78,12 @@ public class ShotAdapter extends RecyclerView.Adapter {
                         bucket(view.getContext());
                     }
                 });
+
+                Drawable bucketDrawable = shot.bucketed
+                                    ? ContextCompat.getDrawable(getContext(), R.drawable.ic_inbox_dribbble_18dp)
+                                    : ContextCompat.getDrawable(getContext(), R.drawable.ic_inbox_black_18dp);
+                shotDetailViewHolder.bucketButton.setImageDrawable(bucketDrawable);
+
                 break;
         }
     }
@@ -139,5 +147,10 @@ public class ShotAdapter extends RecyclerView.Adapter {
 
     public List<String> getReadOnlyCollectedBucketIds() {
         return Collections.unmodifiableList(collectedBucketIds);
+    }
+
+    @NonNull
+    private Context getContext() {
+        return shotFragment.getContext();
     }
 }
