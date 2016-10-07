@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.os.AsyncTaskCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -44,6 +45,7 @@ public class ShotListFragment extends Fragment {
 
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
+    @BindView(R.id.swipe_refresh_container) SwipeRefreshLayout swipeRefreshLayout;
 
     private ShotListAdapter adapter;
     private int listType;
@@ -52,7 +54,7 @@ public class ShotListFragment extends Fragment {
         @Override
         public void onLoadMore() {
             if (Dribbble.isLoggedIn()) {
-                AsyncTaskCompat.executeParallel(new LoadShotTask());
+                AsyncTaskCompat.executeParallel(new LoadShotTask(false));
             }
         }
     };
@@ -95,6 +97,16 @@ public class ShotListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         listType = getArguments().getInt(KEY_LIST_TYPE);
 
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                AsyncTaskCompat.executeParallel(new LoadShotTask(true));
+            }
+        });
+
+
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         recyclerView.addItemDecoration(new SpaceItemDecoration(
@@ -108,10 +120,15 @@ public class ShotListFragment extends Fragment {
 
 
     private class LoadShotTask extends DribbbleTask<Void, Void, List<Shot>> {
+        private boolean refresh;
+
+        public LoadShotTask(boolean refresh) {
+            this.refresh = refresh;
+        }
 
         @Override
         protected List<Shot> doJob(Void... params) throws DribbbleException {
-            int page = adapter.getData().size() / Dribbble.SHOTS_PER_PAGE + 1;
+            int page = refresh? 1: adapter.getData().size() / Dribbble.SHOTS_PER_PAGE + 1;
             switch(listType) {
                 case LIST_TYPE_POPULAR:
                     return Dribbble.getShots(page);
@@ -130,7 +147,15 @@ public class ShotListFragment extends Fragment {
             for (int i = 0; i < k; i++){ // resume loading from an incomplete page, simply update current page
                 shots.remove(0); // remove first k buckets that were already loaded
             }
-            adapter.append(shots);
+
+            if (refresh) {
+                swipeRefreshLayout.setRefreshing(false);
+                adapter.setData(shots);
+            } else {
+                swipeRefreshLayout.setEnabled(true);
+                adapter.append(shots);
+            }
+
         }
 
         @Override
