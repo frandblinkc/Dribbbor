@@ -100,7 +100,12 @@ public class ShotAdapter extends RecyclerView.Adapter {
                     }
                 });
 
-                //TODO: shareButton onClickListener
+                shotDetailViewHolder.shareButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        shotFragment.share();
+                    }
+                });
 
                 Drawable likeDrawable = shot.liked
                                     ? ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite_dribbble_18dp)

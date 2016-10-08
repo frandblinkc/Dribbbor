@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -264,6 +265,16 @@ public class ShotFragment extends Fragment {
             startActivityForResult(intent, ShotFragment.REQ_CODE_BUCKET);
         }
 
+    }
+
+    // share
+    public void share() {
+        Log.d("frandblinkc", "sharing shot" + shot.title);
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shot.title + " " + shot.html_url);
+        shareIntent.setType("text/plain");
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_shot)));
     }
 
     // set result for ShotActivity, returned to ShotListFragment to update the corresponding item
