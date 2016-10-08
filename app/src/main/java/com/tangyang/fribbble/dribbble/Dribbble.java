@@ -33,9 +33,9 @@ import okhttp3.Response;
  */
 public class Dribbble {
 
-    public static final int SHOTS_PER_PAGE = 20;
-    public static final int BUCKETS_PER_PAGE = 20;
-    public static final int LIKES_PER_PAGE = 20;
+    public static final int SHOTS_PER_PAGE = 12;
+    public static final int BUCKETS_PER_PAGE = 12;
+    public static final int LIKES_PER_PAGE = 12;
 
     private static final String TAG = "Dribbble API";
 

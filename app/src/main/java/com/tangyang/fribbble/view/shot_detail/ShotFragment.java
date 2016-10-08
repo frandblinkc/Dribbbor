@@ -169,7 +169,10 @@ public class ShotFragment extends Fragment {
 
             shot.bucketed = !collectedBucketIds.isEmpty();
             shot.buckets_count += added.size() - removed.size(); // update locally, no need to reload
-            recyclerView.getAdapter().notifyDataSetChanged();
+
+            // only update shot detail part, do not load image again
+            int last = recyclerView.getAdapter().getItemCount() - 1;
+            recyclerView.getAdapter().notifyItemChanged(last);
 
             setResult();
         }
@@ -227,7 +230,9 @@ public class ShotFragment extends Fragment {
 
             shot.liked = like;
             shot.likes_count += like? 1: -1;
-            recyclerView.getAdapter().notifyDataSetChanged();
+            // only update shot detail part, do not load image again
+            int last = recyclerView.getAdapter().getItemCount() - 1;
+            recyclerView.getAdapter().notifyItemChanged(last);
 
             setResult();
         }

@@ -114,7 +114,7 @@ public class ShotListFragment extends Fragment {
                     shot.likes_count = updatedShot.likes_count;
                     shot.buckets_count = updatedShot.buckets_count;
 
-                    if (!shot.liked) {
+                    if (!shot.liked && listType == LIST_TYPE_LIKED) {
                         adapter.removeDataItem(i);
                     }
                     adapter.notifyDataSetChanged();
