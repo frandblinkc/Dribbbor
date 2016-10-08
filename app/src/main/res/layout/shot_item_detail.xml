@@ -108,7 +108,7 @@
             android:layout_alignParentLeft="true"
             android:layout_marginRight="@dimen/spacing_large"
             android:contentDescription="@string/shot_author_image"
-            fresco:viewAspectRatio="1.33"
+            fresco:viewAspectRatio="1"
             fresco:placeholderImage="@drawable/user_profile_image_placeholder"
             fresco:placeholderImageScaleType="fitCenter">
         </com.facebook.drawee.view.SimpleDraweeView>
