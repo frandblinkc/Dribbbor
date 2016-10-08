@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.drawer_item_likes:
-                        fragment = ShotListFragment.newInstance(ShotListFragment.LIST_TYPE_POPULAR);
+                        fragment = ShotListFragment.newInstance(ShotListFragment.LIST_TYPE_LIKED);
                         setTitle(R.string.title_likes);
                         break;
 

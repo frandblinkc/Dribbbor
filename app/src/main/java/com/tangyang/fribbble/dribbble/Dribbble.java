@@ -12,12 +12,14 @@ import android.webkit.CookieSyncManager;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.tangyang.fribbble.model.Bucket;
+import com.tangyang.fribbble.model.Like;
 import com.tangyang.fribbble.model.Shot;
 import com.tangyang.fribbble.model.User;
 import com.tangyang.fribbble.utils.ModelUtils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.FormBody;
@@ -33,6 +35,7 @@ public class Dribbble {
 
     public static final int SHOTS_PER_PAGE = 20;
     public static final int BUCKETS_PER_PAGE = 20;
+    public static final int LIKES_PER_PAGE = 20;
 
     private static final String TAG = "Dribbble API";
 
@@ -51,8 +54,11 @@ public class Dribbble {
 
     private static final TypeToken<User> USER_TYPE_TOKEN = new TypeToken<User>(){};
     private static final TypeToken<Bucket> BUCKET_TYPE_TOKEN = new TypeToken<Bucket>() {};
+    private static final TypeToken<Shot> SHOT_TYPE_TOKEN = new TypeToken<Shot>() {};
+    private static final TypeToken<Like> LIKE_TYPE_TOKEN = new TypeToken<Like>() {};
     private static final TypeToken<List<Shot>> SHOT_LIST_TYPE_TOKEN = new TypeToken<List<Shot>>(){};
     private static final TypeToken<List<Bucket>> BUCKET_LIST_TYPE_TOKEN = new TypeToken<List<Bucket>>(){};
+    private static final TypeToken<List<Like>> LIKE_LIST_TYPE_TOKEN = new TypeToken<List<Like>>(){};
 
     private static String accessToken;
     private static User user;
@@ -95,6 +101,13 @@ public class Dribbble {
         Request request = authRequestBuilder(url)
                             .put(requestBody)
                             .build();
+        return makeRequest(request);
+    }
+
+    private static Response makeDeleteRequest(String url) throws DribbbleException {
+        Request request = authRequestBuilder(url)
+                .delete()
+                .build();
         return makeRequest(request);
     }
 
@@ -225,6 +238,43 @@ public class Dribbble {
         return parseResponse(makeGetRequest(url), SHOT_LIST_TYPE_TOKEN);
     }
 
+    // get a specific shot
+    public static Shot getShot(@NonNull String id) throws DribbbleException {
+        String url = SHOTS_END_POINT + "/" + id;
+        return parseResponse(makeGetRequest(url), SHOT_TYPE_TOKEN);
+    }
+
+    // like a shot
+    public static Like likeShot(@NonNull String id) throws DribbbleException {
+        String url = SHOTS_END_POINT + "/" + id + "/like";
+        Response response = makePostRequest(url, new FormBody.Builder().build());
+        checkStatusCode(response, HttpURLConnection.HTTP_CREATED);
+        return parseResponse(response, LIKE_TYPE_TOKEN);
+    }
+
+    // unlike a shot
+    public static void unlikeShot(@NonNull String id) throws  DribbbleException {
+        String url = SHOTS_END_POINT + "/" + id + "/like";
+        Response response = makeDeleteRequest(url);
+        checkStatusCode(response, HttpURLConnection.HTTP_NO_CONTENT);
+    }
+
+    // check if liking a shot or not
+    public static boolean isLikingShot(@NonNull String id) throws  DribbbleException {
+        String url = SHOTS_END_POINT + "/" + id + "/like";
+        Response response = makeGetRequest(url);
+        switch (response.code()) {
+            case HttpURLConnection.HTTP_OK:
+                return true;
+            case HttpURLConnection.HTTP_NOT_FOUND:
+                return false;
+            default:
+                throw new DribbbleException(response.message());
+        }
+    }
+
+
+
     // get shots in bucket
     public static List<Shot> getBucketShots(String bucketId, int page) throws DribbbleException {
         Log.d("frandblinkc", "inside Dribbble.getBucketShots");
@@ -245,6 +295,22 @@ public class Dribbble {
     public static List<Bucket> getUserBuckets(int page) throws DribbbleException {
         String url = USER_END_POINT + "/buckets?page=" + page + "&per_page=" + BUCKETS_PER_PAGE;
         return parseResponse(makeGetRequest(url), BUCKET_LIST_TYPE_TOKEN);
+    }
+
+    // get current user's likes
+    public static List<Like> getLikes(int page) throws DribbbleException {
+        String url = USER_END_POINT + "/likes?page=" + page + "&per_page=" + LIKES_PER_PAGE;
+        return parseResponse(makeGetRequest(url), LIKE_LIST_TYPE_TOKEN);
+    }
+
+    // get liked shots
+    public static List<Shot> getLikedShots(int page) throws  DribbbleException {
+        List<Like> likes = getLikes(page);
+        List<Shot> likedShots = new ArrayList<>();
+        for (Like like: likes) {
+            likedShots.add(like.shot);
+        }
+        return likedShots;
     }
 
     // get all buckets that contains the shotId

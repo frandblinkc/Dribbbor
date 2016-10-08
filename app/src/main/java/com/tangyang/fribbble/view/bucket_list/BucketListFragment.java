@@ -6,9 +6,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,12 +52,13 @@ public class BucketListFragment extends Fragment{
     public static final String KEY_CHOSEN_BUCKET_IDS = "chosen_bucket_ids";
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
-    @BindView(R.id.fab) FloatingActionButton fab;
+
     @BindView(R.id.swipe_refresh_container) SwipeRefreshLayout swipeRefreshLayout;
 
     private BucketListAdapter adapter;
     private boolean isChoosingMode;
     private ArrayList<String> chosenBucketIds;
+    private FloatingActionButton fab;
 
     private EndlessListAdapter.LoadMoreListener loadMoreListener = new EndlessListAdapter.LoadMoreListener() {
         @Override
@@ -124,6 +127,17 @@ public class BucketListFragment extends Fragment{
         recyclerView.setAdapter(adapter);
 
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+
+        // set the ImageDrawable and behavior
+        fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_add_white_24dp));
+        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+        p.setBehavior(null);
+        fab.setLayoutParams(p);
+
+        fab.setVisibility(View.VISIBLE);
+
+
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

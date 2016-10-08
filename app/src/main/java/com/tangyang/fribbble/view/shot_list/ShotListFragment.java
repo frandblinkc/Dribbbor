@@ -165,6 +165,8 @@ public class ShotListFragment extends Fragment {
             switch(listType) {
                 case LIST_TYPE_POPULAR:
                     return Dribbble.getShots(page);
+                case LIST_TYPE_LIKED:
+                    return Dribbble.getLikedShots(page);
                 case LIST_TYPE_BUCKET:
                     String bucketId = getArguments().getString(KEY_BUCKET_ID);
                     return Dribbble.getBucketShots(bucketId, page);
