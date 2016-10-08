@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.os.AsyncTaskCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -42,7 +43,10 @@ public class ShotFragment extends Fragment {
     public static final String KEY_SHOT = "shot";
     public static final int REQ_CODE_BUCKET = 100;
 
-    @BindView(R.id.recycler_view) RecyclerView recyclerView;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.swipe_refresh_container)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private Shot shot;
     private boolean isLiking;
@@ -58,17 +62,40 @@ public class ShotFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+        final View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         ButterKnife.bind(this, view);
+
+
         return view;
     }
 
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        shot = ModelUtils.toObject(getArguments().getString(KEY_SHOT), new TypeToken<Shot>(){});
+        if (shot == null) {//first time entering shot fragment
+            swipeRefreshLayout.setEnabled(false);
+            Log.d("frandblinkc", "shot push to refresh disabled!");
+        }
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onViewCreated(getView(), null);
+            }
+        });
+
+
+        shot = ModelUtils.toObject(getArguments().getString(KEY_SHOT), new TypeToken<Shot>() {
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new ShotAdapter(this, shot));
+
+
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         isLiking = true;
         AsyncTaskCompat.executeParallel(new CheckLikeTask());
@@ -82,13 +109,13 @@ public class ShotFragment extends Fragment {
             List<String> addedBucketIds = new ArrayList<>();
             List<String> removedBucketIds = new ArrayList<>();
 
-            for (String chosenBucketId: chosenBucketIds) {
+            for (String chosenBucketId : chosenBucketIds) {
                 if (!collectedBucketIds.contains(chosenBucketId)) {
                     addedBucketIds.add(chosenBucketId);
                 }
             }
 
-            for (String collectedBucketId: collectedBucketIds) {
+            for (String collectedBucketId : collectedBucketIds) {
                 if (!chosenBucketIds.contains(collectedBucketId)) {
                     removedBucketIds.add(collectedBucketId);
                 }
@@ -98,6 +125,7 @@ public class ShotFragment extends Fragment {
         }
     }
 
+
     private class LoadBucketsTask extends DribbbleTask<Void, Void, List<String>> {
         @Override
         protected List<String> doJob(Void... params) throws DribbbleException {
@@ -105,12 +133,12 @@ public class ShotFragment extends Fragment {
             List<Bucket> userBuckets = Dribbble.getUserBuckets();
 
             Set<String> userBucketIds = new HashSet<>();
-            for (Bucket userBucket: userBuckets) {
+            for (Bucket userBucket : userBuckets) {
                 userBucketIds.add(userBucket.id);
             }
 
             List<String> collectedBucketIds = new ArrayList<>();
-            for (Bucket shotBucket: shotBuckets) {
+            for (Bucket shotBucket : shotBuckets) {
                 if (userBucketIds.contains(shotBucket.id)) {
                     collectedBucketIds.add(shotBucket.id);
                 }
@@ -121,11 +149,14 @@ public class ShotFragment extends Fragment {
 
         @Override
         protected void onSuccess(List<String> result) {
-                collectedBucketIds = new ArrayList<>(result);
-                if (result.size() > 0) {
-                    shot.bucketed = true;
-                    recyclerView.getAdapter().notifyDataSetChanged();
-                }
+            collectedBucketIds = new ArrayList<>(result);
+            if (result.size() > 0) {
+                shot.bucketed = true;
+                recyclerView.getAdapter().notifyDataSetChanged();
+            }
+            swipeRefreshLayout.setEnabled(true);
+            swipeRefreshLayout.setRefreshing(false);
+            Log.d("frandblinkc", "shot push to refresh enabled!");
         }
 
         @Override
@@ -136,7 +167,7 @@ public class ShotFragment extends Fragment {
 
 
     // Async task to update the list of user's buckets that collected the current shot
-    private class UpdateCollectedBucketIdsTask extends  DribbbleTask<Void, Void, Void> {
+    private class UpdateCollectedBucketIdsTask extends DribbbleTask<Void, Void, Void> {
         private List<String> added;
         private List<String> removed;
 
@@ -148,11 +179,11 @@ public class ShotFragment extends Fragment {
         // Non-UI thread
         @Override
         protected Void doJob(Void... params) throws DribbbleException {
-            for (String addedId: added) {
+            for (String addedId : added) {
                 Dribbble.addBucketShot(addedId, shot.id);
             }
 
-            for (String removedId: removed) {
+            for (String removedId : removed) {
                 Dribbble.removeBucketShot(removedId, shot.id);
             }
             return null;
@@ -230,7 +261,7 @@ public class ShotFragment extends Fragment {
             isLiking = false;
 
             shot.liked = like;
-            shot.likes_count += like? 1: -1;
+            shot.likes_count += like ? 1 : -1;
             // only update shot detail part, do not load image again
             int last = recyclerView.getAdapter().getItemCount() - 1;
             recyclerView.getAdapter().notifyItemChanged(last);
@@ -246,7 +277,6 @@ public class ShotFragment extends Fragment {
     }
 
 
-
     // like button onClickListener
     public void like(@NonNull String shotId, boolean like) {
         if (!isLiking) {
@@ -256,7 +286,7 @@ public class ShotFragment extends Fragment {
     }
 
     // bucketButton onClickListener
-    public  void bucket() {
+    public void bucket() {
         if (collectedBucketIds == null) {
             Snackbar.make(getView(), "Loadin// == null means we are still loadingg buckets, just one seconde...", Snackbar.LENGTH_LONG);
         } else {
@@ -280,10 +310,10 @@ public class ShotFragment extends Fragment {
     // set result for ShotActivity, returned to ShotListFragment to update the corresponding item
     private void setResult() {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(KEY_SHOT, ModelUtils.toString(shot, new TypeToken<Shot>(){}));
+        resultIntent.putExtra(KEY_SHOT, ModelUtils.toString(shot, new TypeToken<Shot>() {
+        }));
         getActivity().setResult(Activity.RESULT_OK, resultIntent);
     }
-
 
 
 }
