@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.os.AsyncTaskCompat;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.google.gson.JsonSyntaxException;
 import com.tangyang.fribbble.R;
@@ -40,15 +42,18 @@ public class ShotListFragment extends Fragment {
     public static final String KEY_LIST_TYPE = "list_type";
 
     public static final int LIST_TYPE_POPULAR = 0;
-    public static final int LIST_TYPE_LIKEED = 1;
+    public static final int LIST_TYPE_LIKED = 1;
     public static final int LIST_TYPE_BUCKET = 2;
 
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
+    @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.swipe_refresh_container) SwipeRefreshLayout swipeRefreshLayout;
 
     private ShotListAdapter adapter;
     private int listType;
+    private LinearLayoutManager linearLayoutManager;
+    private boolean isInitializingFab = false;
 
     private EndlessListAdapter.LoadMoreListener loadMoreListener = new EndlessListAdapter.LoadMoreListener() {
         @Override
@@ -86,7 +91,7 @@ public class ShotListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_fab_recycler_view_scroll, container, false);
         ButterKnife.bind(this, view); // equivalent to this.recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         return view;
     }
@@ -112,8 +117,8 @@ public class ShotListFragment extends Fragment {
                 android.R.color.holo_red_light);
 
 
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
 
         recyclerView.addItemDecoration(new SpaceItemDecoration(
                 getResources().getDimensionPixelSize(R.dimen.spacing_small)));
@@ -121,7 +126,18 @@ public class ShotListFragment extends Fragment {
         adapter = new ShotListAdapter(this, new ArrayList<Shot>(), loadMoreListener);
 
         recyclerView.setAdapter(adapter);
+
+        // set up the fab back to top listener
+        fab.setVisibility(View.INVISIBLE);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                linearLayoutManager.scrollToPosition(0);
+            }
+        });
     }
+
+
 
 
 

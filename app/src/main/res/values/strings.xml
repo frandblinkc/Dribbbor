@@ -37,4 +37,6 @@
 
     <string name="save">Save</string>
     <string name="choose_bucket">Choose bucket</string>
+
+    <string name="scroll_up_show_behavior">com.tangyang.fribbble.utils.custom_behavior.ScrollUpShowBehavior</string>
 </resources>
