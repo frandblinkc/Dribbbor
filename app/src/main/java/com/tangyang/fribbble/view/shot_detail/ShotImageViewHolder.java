@@ -10,10 +10,10 @@ import com.tangyang.fribbble.view.base.BaseViewHolder;
 /**
  * Created by YangTang on 9/27/2016.
  */
-public class ImageViewHolder extends RecyclerView.ViewHolder {
+public class ShotImageViewHolder extends RecyclerView.ViewHolder {
     SimpleDraweeView image;
 
-    public ImageViewHolder(View itemView) {
+    public ShotImageViewHolder(View itemView) {
         super(itemView);
         image = (SimpleDraweeView) itemView;
     }

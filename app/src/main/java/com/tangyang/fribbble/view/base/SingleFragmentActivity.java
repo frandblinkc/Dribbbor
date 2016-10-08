@@ -27,7 +27,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(isBackEnabled());
         setTitle(getActivityTitle());
 
         if (savedInstanceState == null) {
@@ -54,4 +54,9 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
     protected String getActivityTitle() {
         return ""; // return empty activity title in base class as default title
     }
+
+    protected boolean isBackEnabled() {
+        return true;
+    }
+
 }

@@ -106,6 +106,13 @@ public abstract class EndlessListAdapter<M> extends RecyclerView.Adapter<BaseVie
         return data;
     }
 
+    public M removeDataItem(int position) {
+        if (position >= 0 && position < data.size()) {
+            return data.remove(position);
+        }
+        return null;
+    }
+
     public void setShowLoading(boolean showLoading) {
         if(showLoading == this.showLoading) {
             return;

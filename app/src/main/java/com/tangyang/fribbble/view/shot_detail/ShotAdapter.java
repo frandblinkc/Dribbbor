@@ -1,40 +1,36 @@
 package com.tangyang.fribbble.view.shot_detail;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.model.Shot;
 import com.tangyang.fribbble.utils.ImageUtils;
-import com.tangyang.fribbble.view.bucket_list.BucketListFragment;
-import com.tangyang.fribbble.view.bucket_list.ChooseBucketActivity;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by YangTang on 9/27/2016.
  */
 public class ShotAdapter extends RecyclerView.Adapter {
     public static final int VIEW_TYPE_SHOT_IMAGE = 0;
-    public static final int VIEW_TYPE_SHOT_INFO = 1;
+    public static final int VIEW_TYPE_SHOT_DETAIL = 1;
 
     private final Shot shot;
     private final ShotFragment shotFragment;
-    private ArrayList<String> collectedBucketIds;
+
 
     public ShotAdapter(@NonNull ShotFragment shotFragment, @NonNull Shot shot) {
         this.shotFragment = shotFragment;
         this.shot = shot;
-        this.collectedBucketIds = null;
     }
 
     @Override
@@ -44,11 +40,11 @@ public class ShotAdapter extends RecyclerView.Adapter {
             case VIEW_TYPE_SHOT_IMAGE:
                 view = LayoutInflater.from(parent.getContext())
                                      .inflate(R.layout.shot_item_image, parent, false);
-                return new ImageViewHolder(view);
-            case VIEW_TYPE_SHOT_INFO:
+                return new ShotImageViewHolder(view);
+            case VIEW_TYPE_SHOT_DETAIL:
                 view = LayoutInflater.from(parent.getContext())
-                                     .inflate(R.layout.shot_item_info,parent, false);
-                return new InfoViewHolder(view);
+                                     .inflate(R.layout.shot_item_detail,parent, false);
+                return new ShotDetailViewHolder(view);
             default:
                 return null;
         }
@@ -59,26 +55,57 @@ public class ShotAdapter extends RecyclerView.Adapter {
         int viewType = getItemViewType(position);
         switch(viewType) {
             case VIEW_TYPE_SHOT_IMAGE:
-                ImageUtils.loadImage(shot, ((ImageViewHolder) holder).image);
+                ImageUtils.loadImage(shot, ((ShotImageViewHolder) holder).image);
                 break;
-            case VIEW_TYPE_SHOT_INFO:
-                InfoViewHolder shotDetailViewHolder = (InfoViewHolder) holder;
+            case VIEW_TYPE_SHOT_DETAIL:
+                ShotDetailViewHolder shotDetailViewHolder = (ShotDetailViewHolder) holder;
                 shotDetailViewHolder.title.setText(shot.title);
                 shotDetailViewHolder.authorName.setText(shot.user.name);
-                shotDetailViewHolder.description.setText(shot.description);
+
+                shotDetailViewHolder.description.setText(Html.fromHtml(shot.description == null? "": shot.description));
+                shotDetailViewHolder.description.setMovementMethod(LinkMovementMethod.getInstance());
+
 
                 shotDetailViewHolder.likesCount.setText(String.valueOf(shot.likes_count));
                 shotDetailViewHolder.bucketsCount.setText(String.valueOf(shot.buckets_count));
                 shotDetailViewHolder.viewsCount.setText(String.valueOf(shot.views_count));
 
+                //TODO: load user image
+
+                shotDetailViewHolder.likesCount.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getContext(), "Likes count clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                shotDetailViewHolder.bucketsCount.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getContext(), "Buckets count clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                shotDetailViewHolder.likeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        shotFragment.like(shot.id, !shot.liked);
+                    }
+                });
 
                 shotDetailViewHolder.bucketButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        bucket(view.getContext());
+                        shotFragment.bucket();
                     }
                 });
 
+                //TODO: shareButton onClickListener
+
+                Drawable likeDrawable = shot.liked
+                                    ? ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite_dribbble_18dp)
+                                    : ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite_border_black_18dp);
+                shotDetailViewHolder.likeButton.setImageDrawable(likeDrawable);
                 Drawable bucketDrawable = shot.bucketed
                                     ? ContextCompat.getDrawable(getContext(), R.drawable.ic_inbox_dribbble_18dp)
                                     : ContextCompat.getDrawable(getContext(), R.drawable.ic_inbox_black_18dp);
@@ -99,55 +126,11 @@ public class ShotAdapter extends RecyclerView.Adapter {
         if (position == 0) {
             return VIEW_TYPE_SHOT_IMAGE;
         } else {
-            return VIEW_TYPE_SHOT_INFO;
+            return VIEW_TYPE_SHOT_DETAIL;
         }
     }
 
 
-    private void bucket(Context context) {
-        if (collectedBucketIds != null) {// == null means we are still loading
-            Intent intent = new Intent(context, ChooseBucketActivity.class);
-
-            intent.putStringArrayListExtra(BucketListFragment.KEY_CHOSEN_BUCKET_IDS, collectedBucketIds);
-            shotFragment.startActivityForResult(intent, ShotFragment.REQ_CODE_BUCKET);
-        }
-
-    }
-
-    // update the list of collected bucket ids for current shot
-    public void updateCollectedBucketIds(@NonNull List<String> bucketIds) {
-        if (collectedBucketIds == null) {
-            collectedBucketIds = new ArrayList<>();
-        }
-
-        collectedBucketIds.clear();
-        collectedBucketIds.addAll(bucketIds);
-
-        shot.bucketed = !bucketIds.isEmpty();
-        notifyDataSetChanged();
-    }
-
-    // update the list of collected bucket ids for current shot, with addedIds and removedIds
-    public void updateCollectedBucketIds(List<String> addedIds, List<String> removedIds) {
-        if (collectedBucketIds == null) {
-            collectedBucketIds = new ArrayList<>();
-        }
-
-        if (addedIds.isEmpty() && removedIds.isEmpty()) {
-            return;
-        }
-
-        collectedBucketIds.addAll(addedIds);
-        collectedBucketIds.removeAll(removedIds);
-
-        shot.bucketed = !collectedBucketIds.isEmpty();
-        shot.buckets_count += addedIds.size() - removedIds.size(); // update locally, no need to reload
-        notifyDataSetChanged();
-    }
-
-    public List<String> getReadOnlyCollectedBucketIds() {
-        return Collections.unmodifiableList(collectedBucketIds);
-    }
 
     @NonNull
     private Context getContext() {

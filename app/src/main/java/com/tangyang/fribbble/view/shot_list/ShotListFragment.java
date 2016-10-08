@@ -1,5 +1,7 @@
 package com.tangyang.fribbble.view.shot_list;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +15,7 @@ import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +23,17 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.dribbble.Dribbble;
 import com.tangyang.fribbble.dribbble.DribbbleException;
+import com.tangyang.fribbble.utils.ModelUtils;
 import com.tangyang.fribbble.utils.custom_behavior.ScrollUpShowBehavior;
 import com.tangyang.fribbble.view.base.DribbbleTask;
 import com.tangyang.fribbble.view.base.EndlessListAdapter;
 import com.tangyang.fribbble.view.base.SpaceItemDecoration;
 import com.tangyang.fribbble.model.Shot;
+import com.tangyang.fribbble.view.shot_detail.ShotFragment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +54,8 @@ public class ShotListFragment extends Fragment {
     public static final int LIST_TYPE_LIKED = 1;
     public static final int LIST_TYPE_BUCKET = 2;
 
+    public static final int REQ_CODE_SHOT = 100;
+
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
     FloatingActionButton fab;
@@ -56,6 +64,7 @@ public class ShotListFragment extends Fragment {
     private ShotListAdapter adapter;
     private int listType;
     private LinearLayoutManager linearLayoutManager;
+
 
 
     private EndlessListAdapter.LoadMoreListener loadMoreListener = new EndlessListAdapter.LoadMoreListener() {
@@ -86,6 +95,33 @@ public class ShotListFragment extends Fragment {
         ShotListFragment fragment = new ShotListFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQ_CODE_SHOT && resultCode == Activity.RESULT_OK) {
+            Shot updatedShot = ModelUtils.toObject(data.getStringExtra(ShotFragment.KEY_SHOT),
+                                                                new TypeToken<Shot>(){});
+
+            List<Shot> shots = adapter.getData();
+            for (int i = 0; i < shots.size(); i++) {
+                Shot shot = shots.get(i);
+                if (TextUtils.equals(shot.id, updatedShot.id)) {
+                    if (shot.likes_count == updatedShot.likes_count
+                            && shot.buckets_count == updatedShot.buckets_count) {
+                        return;
+                    }
+                    shot.likes_count = updatedShot.likes_count;
+                    shot.buckets_count = updatedShot.buckets_count;
+
+                    if (!shot.liked) {
+                        adapter.removeDataItem(i);
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+        }
     }
 
     @Nullable

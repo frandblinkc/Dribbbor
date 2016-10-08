@@ -75,7 +75,7 @@ public class ShotListAdapter extends EndlessListAdapter<Shot> {
                 intent.putExtra(ShotFragment.KEY_SHOT,
                         ModelUtils.toString(shot, new TypeToken<Shot>(){}));
                 intent.putExtra(ShotActivity.KEY_SHOT_TITLE, shot.title);
-                shotListFragment.startActivity(intent);
+                shotListFragment.startActivityForResult(intent,ShotListFragment.REQ_CODE_SHOT);
             }
         });
     }

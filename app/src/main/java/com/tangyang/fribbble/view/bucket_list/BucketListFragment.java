@@ -246,13 +246,13 @@ public class BucketListFragment extends Fragment{
             if (bucket != null) {
                 adapter.prepend(Collections.singletonList(bucket));
             } else {
-                Snackbar.make(getView(), "Creating bucket failed!", Snackbar.LENGTH_LONG);
+                Snackbar.make(getView(), "Creating bucket failed!", Snackbar.LENGTH_LONG).show();
             }
         }
 
         @Override
         protected void onFailure(DribbbleException e) {
-            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG);
+            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
         }
     }
 }

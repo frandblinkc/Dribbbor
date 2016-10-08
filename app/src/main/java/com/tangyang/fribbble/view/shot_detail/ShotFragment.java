@@ -1,6 +1,7 @@
 package com.tangyang.fribbble.view.shot_detail;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.tangyang.fribbble.model.Shot;
 import com.tangyang.fribbble.utils.ModelUtils;
 import com.tangyang.fribbble.view.base.DribbbleTask;
 import com.tangyang.fribbble.view.bucket_list.BucketListFragment;
+import com.tangyang.fribbble.view.bucket_list.ChooseBucketActivity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,7 +44,9 @@ public class ShotFragment extends Fragment {
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
 
     private Shot shot;
-    private ShotAdapter shotAdapter;
+    private boolean isLiking;
+    private ArrayList<String> collectedBucketIds;
+
 
     public static Fragment newInstance(@NonNull Bundle args) {
         ShotFragment fragment = new ShotFragment();
@@ -63,10 +67,11 @@ public class ShotFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         shot = ModelUtils.toObject(getArguments().getString(KEY_SHOT), new TypeToken<Shot>(){});
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        shotAdapter = new ShotAdapter(this, shot);
-        recyclerView.setAdapter(shotAdapter);
+        recyclerView.setAdapter(new ShotAdapter(this, shot));
 
-        AsyncTaskCompat.executeParallel(new LoadCollectedBucketIdsTask());
+        isLiking = true;
+        AsyncTaskCompat.executeParallel(new CheckLikeTask());
+        AsyncTaskCompat.executeParallel(new LoadBucketsTask());
     }
 
     @Override
@@ -75,7 +80,6 @@ public class ShotFragment extends Fragment {
             List<String> chosenBucketIds = data.getStringArrayListExtra(BucketListFragment.KEY_CHOSEN_BUCKET_IDS);
             List<String> addedBucketIds = new ArrayList<>();
             List<String> removedBucketIds = new ArrayList<>();
-            List<String> collectedBucketIds = shotAdapter.getReadOnlyCollectedBucketIds();
 
             for (String chosenBucketId: chosenBucketIds) {
                 if (!collectedBucketIds.contains(chosenBucketId)) {
@@ -93,7 +97,7 @@ public class ShotFragment extends Fragment {
         }
     }
 
-    private class LoadCollectedBucketIdsTask extends DribbbleTask<Void, Void, List<String>> {
+    private class LoadBucketsTask extends DribbbleTask<Void, Void, List<String>> {
         @Override
         protected List<String> doJob(Void... params) throws DribbbleException {
             List<Bucket> shotBuckets = Dribbble.getShotBuckets(shot.id);
@@ -115,13 +119,17 @@ public class ShotFragment extends Fragment {
         }
 
         @Override
-        protected void onSuccess(List<String> collectedBucketIds) {
-                shotAdapter.updateCollectedBucketIds(collectedBucketIds);
+        protected void onSuccess(List<String> result) {
+                collectedBucketIds = new ArrayList<>(result);
+                if (result.size() > 0) {
+                    shot.bucketed = true;
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                }
         }
 
         @Override
         protected void onFailure(DribbbleException e) {
-            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG);
+            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -152,14 +160,114 @@ public class ShotFragment extends Fragment {
         // on UI thread
         @Override
         protected void onSuccess(Void aVoid) {
-            shotAdapter.updateCollectedBucketIds(added, removed);
+            if (added.isEmpty() && removed.isEmpty()) {
+                return;
+            }
+
+            collectedBucketIds.addAll(added);
+            collectedBucketIds.removeAll(removed);
+
+            shot.bucketed = !collectedBucketIds.isEmpty();
+            shot.buckets_count += added.size() - removed.size(); // update locally, no need to reload
+            recyclerView.getAdapter().notifyDataSetChanged();
+
+            setResult();
         }
 
         @Override
         protected void onFailure(DribbbleException e) {
-            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG);
+            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
         }
     }
+
+    // async task to check if like current shot or not
+    private class CheckLikeTask extends DribbbleTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doJob(Void... params) throws DribbbleException {
+            return Dribbble.isLikingShot(shot.id);
+        }
+
+        @Override
+        protected void onSuccess(Boolean result) {
+            isLiking = false;
+            shot.liked = result;
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
+
+        @Override
+        protected void onFailure(DribbbleException e) {
+            isLiking = false;
+            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    // async task to switch the like/unlike status of current shot
+    private class LikeTask extends DribbbleTask<Void, Void, Void> {
+        private String shotId;
+        private boolean like;
+
+        public LikeTask(String shotId, boolean like) {
+            this.shotId = shotId;
+            this.like = like;
+        }
+
+        @Override
+        protected Void doJob(Void... params) throws DribbbleException {
+            if (like) {
+                Dribbble.likeShot(shotId);
+            } else {
+                Dribbble.unlikeShot(shotId);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onSuccess(Void aVoid) {
+            isLiking = false;
+
+            shot.liked = like;
+            shot.likes_count += like? 1: -1;
+            recyclerView.getAdapter().notifyDataSetChanged();
+
+            setResult();
+        }
+
+        @Override
+        protected void onFailure(DribbbleException e) {
+            isLiking = false;
+            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+
+
+    // like button onClickListener
+    public void like(@NonNull String shotId, boolean like) {
+        if (!isLiking) {
+            isLiking = true;
+            AsyncTaskCompat.executeParallel(new LikeTask(shotId, like));
+        }
+    }
+
+    // bucketButton onClickListener
+    public  void bucket() {
+        if (collectedBucketIds == null) {
+            Snackbar.make(getView(), "Loadin// == null means we are still loadingg buckets, just one seconde...", Snackbar.LENGTH_LONG);
+        } else {
+            Intent intent = new Intent(getContext(), ChooseBucketActivity.class);
+            intent.putStringArrayListExtra(BucketListFragment.KEY_CHOSEN_BUCKET_IDS, collectedBucketIds);
+            startActivityForResult(intent, ShotFragment.REQ_CODE_BUCKET);
+        }
+
+    }
+
+    // set result for ShotActivity, returned to ShotListFragment to update the corresponding item
+    private void setResult() {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(KEY_SHOT, ModelUtils.toString(shot, new TypeToken<Shot>(){}));
+        getActivity().setResult(Activity.RESULT_OK, resultIntent);
+    }
+
 
 
 }

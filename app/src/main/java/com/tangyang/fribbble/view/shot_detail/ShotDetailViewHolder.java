@@ -13,7 +13,7 @@ import butterknife.BindView;
 /**
  * Created by YangTang on 9/27/2016.
  */
-public class InfoViewHolder extends BaseViewHolder {
+public class ShotDetailViewHolder extends BaseViewHolder {
 
     @BindView(R.id.shot_title) TextView title;
     @BindView(R.id.shot_description) TextView description;
@@ -28,7 +28,7 @@ public class InfoViewHolder extends BaseViewHolder {
 
 
 
-    public InfoViewHolder(View itemView) {
+    public ShotDetailViewHolder(View itemView) {
         super(itemView);
     }
 }
