@@ -5,6 +5,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.view.base.BaseViewHolder;
 
@@ -17,7 +18,7 @@ public class ShotDetailViewHolder extends BaseViewHolder {
 
     @BindView(R.id.shot_title) TextView title;
     @BindView(R.id.shot_description) TextView description;
-    @BindView(R.id.shot_author_image) ImageView authorImage;
+    @BindView(R.id.shot_author_image) SimpleDraweeView authorImage;
     @BindView(R.id.shot_author_name) TextView authorName;
     @BindView(R.id.shot_likes_count) TextView likesCount;
     @BindView(R.id.shot_views_count) TextView viewsCount;

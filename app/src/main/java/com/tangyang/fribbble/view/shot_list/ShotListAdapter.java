@@ -1,9 +1,7 @@
 package com.tangyang.fribbble.view.shot_list;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +62,7 @@ public class ShotListAdapter extends EndlessListAdapter<Shot> {
         }
 
         // load image
-        ImageUtils.loadImage(shot, shotViewHolder.image);
+        ImageUtils.loadShotImage(shot, shotViewHolder.image);
 
 
 

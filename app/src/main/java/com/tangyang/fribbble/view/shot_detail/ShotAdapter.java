@@ -3,7 +3,6 @@ package com.tangyang.fribbble.view.shot_detail;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -55,7 +54,7 @@ public class ShotAdapter extends RecyclerView.Adapter {
         int viewType = getItemViewType(position);
         switch(viewType) {
             case VIEW_TYPE_SHOT_IMAGE:
-                ImageUtils.loadImage(shot, ((ShotImageViewHolder) holder).image);
+                ImageUtils.loadShotImage(shot, ((ShotImageViewHolder) holder).image);
                 break;
             case VIEW_TYPE_SHOT_DETAIL:
                 ShotDetailViewHolder shotDetailViewHolder = (ShotDetailViewHolder) holder;
@@ -70,7 +69,7 @@ public class ShotAdapter extends RecyclerView.Adapter {
                 shotDetailViewHolder.bucketsCount.setText(String.valueOf(shot.buckets_count));
                 shotDetailViewHolder.viewsCount.setText(String.valueOf(shot.views_count));
 
-                //TODO: load user image
+                ImageUtils.loadImage(shot.user.avatar_url, shotDetailViewHolder.authorImage);
 
                 shotDetailViewHolder.likesCount.setOnClickListener(new View.OnClickListener() {
                     @Override

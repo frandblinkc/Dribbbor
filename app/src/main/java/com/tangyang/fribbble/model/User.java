@@ -5,5 +5,5 @@ package com.tangyang.fribbble.model;
  */
 public class User {
     public String name;
-    public String avatar_uri;
+    public String avatar_url;
 }

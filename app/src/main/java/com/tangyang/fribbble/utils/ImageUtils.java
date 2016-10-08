@@ -19,9 +19,9 @@ import com.tangyang.fribbble.model.Shot;
  */
 public class ImageUtils {
 
-    public static void loadImage(Shot shot, SimpleDraweeView image) {
+    public static SimpleDraweeView loadImage(String url, SimpleDraweeView image) {
         // set progress JPEG image
-        Uri uri = Uri.parse(shot.getImageUrl());
+        Uri uri = Uri.parse(url);
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
                 .setProgressiveRenderingEnabled(true)
                 .build();
@@ -32,8 +32,17 @@ public class ImageUtils {
                 .build();
 
         image.setController(controller);
+        return image;
+    }
 
-        // add progressbar
+
+    public static void loadShotImage(Shot shot, SimpleDraweeView image) {
+        loadImage(shot.getImageUrl(), image);
+
+        addProgressBar(image);
+    }
+
+    public static void addProgressBar(SimpleDraweeView image) {
         ProgressBarDrawable progressBarDrawable = new ProgressBarDrawable();
         progressBarDrawable.setColor(ContextCompat.getColor(image.getContext(), R.color.colorPrimary));
 
