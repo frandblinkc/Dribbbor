@@ -4,14 +4,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.tangyang.fribbble.R;
-import com.tangyang.fribbble.view.base.SingleFragmentActivity;
+import com.tangyang.fribbble.view.base.SingleFragmentFabActivity;
 
 import java.util.ArrayList;
 
 /**
  * Created by YangTang on 10/6/2016.
  */
-public class ChooseBucketActivity extends SingleFragmentActivity {
+public class ChooseBucketActivity extends SingleFragmentFabActivity {
 
     @NonNull
     @Override

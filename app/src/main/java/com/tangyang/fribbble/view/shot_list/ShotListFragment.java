@@ -4,9 +4,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +23,7 @@ import com.google.gson.JsonSyntaxException;
 import com.tangyang.fribbble.R;
 import com.tangyang.fribbble.dribbble.Dribbble;
 import com.tangyang.fribbble.dribbble.DribbbleException;
+import com.tangyang.fribbble.utils.custom_behavior.ScrollUpShowBehavior;
 import com.tangyang.fribbble.view.base.DribbbleTask;
 import com.tangyang.fribbble.view.base.EndlessListAdapter;
 import com.tangyang.fribbble.view.base.SpaceItemDecoration;
@@ -47,13 +50,13 @@ public class ShotListFragment extends Fragment {
 
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
-    @BindView(R.id.fab) FloatingActionButton fab;
+    FloatingActionButton fab;
     @BindView(R.id.swipe_refresh_container) SwipeRefreshLayout swipeRefreshLayout;
 
     private ShotListAdapter adapter;
     private int listType;
     private LinearLayoutManager linearLayoutManager;
-    private boolean isInitializingFab = false;
+
 
     private EndlessListAdapter.LoadMoreListener loadMoreListener = new EndlessListAdapter.LoadMoreListener() {
         @Override
@@ -91,7 +94,7 @@ public class ShotListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_fab_recycler_view_scroll, container, false);
+        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         ButterKnife.bind(this, view); // equivalent to this.recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         return view;
     }
@@ -128,6 +131,14 @@ public class ShotListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         // set up the fab back to top listener
+        fab = (FloatingActionButton) this.getActivity().findViewById(R.id.fab);
+
+        // set the ImageDrawable and behavior
+        fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_upward_white_24dp));
+        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+        p.setBehavior(new ScrollUpShowBehavior());
+        fab.setLayoutParams(p);
+
         fab.setVisibility(View.INVISIBLE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

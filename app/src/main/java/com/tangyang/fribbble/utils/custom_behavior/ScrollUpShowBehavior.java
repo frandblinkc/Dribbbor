@@ -19,7 +19,7 @@ public class ScrollUpShowBehavior extends FloatingActionButton.Behavior {
 
     private ViewPropertyAnimatorListener viewPropertyAnimatorListener;
 
-    public ScrollUpShowBehavior(Context context, AttributeSet attrs) {
+    public ScrollUpShowBehavior() {
         super();
         this.isAnimatingOut = false;
         this.viewPropertyAnimatorListener = new ViewPropertyAnimatorListener() {
@@ -55,12 +55,12 @@ public class ScrollUpShowBehavior extends FloatingActionButton.Behavior {
     public void onNestedScroll(CoordinatorLayout coordinatorLayout, FloatingActionButton child,
                                View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         // scroll down, hide fab
-        if (((dyConsumed > 0 && dyUnconsumed == 0) || (dyConsumed == 0 && dyUnconsumed > 0)) && child.getVisibility() != View.VISIBLE) {
+        if (((dyConsumed < 0 && dyUnconsumed == 0) || (dyConsumed == 0 && dyUnconsumed < 0)) && child.getVisibility() != View.VISIBLE) {
             AnimatorUtils.scaleShow(child, null);
         }
 
         // scroll up, show fab
-        if (((dyConsumed < 0 && dyUnconsumed == 0) || (dyConsumed == 0 && dyUnconsumed < 0)) && child.getVisibility() != View.GONE && !isAnimatingOut) {
+        if (((dyConsumed > 0 && dyUnconsumed == 0) || (dyConsumed == 0 && dyUnconsumed > 0)) && child.getVisibility() != View.GONE && !isAnimatingOut) {
             AnimatorUtils.scaleHide(child, viewPropertyAnimatorListener);
         }
     }

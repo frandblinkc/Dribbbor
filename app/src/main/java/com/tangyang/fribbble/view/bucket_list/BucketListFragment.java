@@ -87,7 +87,7 @@ public class BucketListFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_fab_recycler_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -123,6 +123,7 @@ public class BucketListFragment extends Fragment{
         adapter = new BucketListAdapter(getContext(), new ArrayList<Bucket>(), loadMoreListener, isChoosingMode);
         recyclerView.setAdapter(adapter);
 
+        fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
